@@ -1,0 +1,88 @@
+{
+  "theme": "LIGHT",
+  "archetype": "Archetype 4 (Swiss & High-Contrast)",
+  "typography": {
+    "heading_font": "Cabinet Grotesk",
+    "body_font": "IBM Plex Sans",
+    "mono_font": "IBM Plex Mono",
+    "rules": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-[#0A0A0A]",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#0A0A0A]",
+      "h3": "text-xl sm:text-2xl font-semibold tracking-tight text-[#1A1A1A]",
+      "body": "text-base leading-relaxed text-[#404040]",
+      "overline": "text-xs font-bold uppercase tracking-[0.2em] text-[#002FA7]",
+      "mono_label": "font-mono text-xs text-[#666666]"
+    },
+    "font_imports": [
+      "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');",
+      "@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400,900&display=swap');"
+    ]
+  },
+  "color_palette": {
+    "background": {
+      "page": "#F4F4F5",
+      "card": "#FFFFFF",
+      "overlay": "rgba(10, 10, 10, 0.4)"
+    },
+    "text": {
+      "primary": "#0A0A0A",
+      "secondary": "#52525B",
+      "muted": "#A1A1AA"
+    },
+    "primary": {
+      "DEFAULT": "#002FA7",
+      "hover": "#00227A",
+      "foreground": "#FFFFFF"
+    },
+    "accent": {
+      "DEFAULT": "#FF3B30",
+      "hover": "#D62B22",
+      "foreground": "#FFFFFF"
+    },
+    "border": {
+      "subtle": "rgba(0, 0, 0, 0.08)",
+      "strong": "rgba(0, 0, 0, 1)"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing, Optical Alignment, Modular Grids",
+    "container": "max-w-7xl mx-auto px-6 sm:px-8 md:px-12",
+    "card_padding": "p-6 sm:p-8",
+    "grid_strategies": {
+      "home_archive": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+      "detail_page": "grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12"
+    },
+    "surface_styles": {
+      "card_default": "bg-white border border-black/10 rounded-none shadow-[0_4px_24px_rgba(0,0,0,0.04)]",
+      "card_hover": "hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300",
+      "header_glass": "sticky top-0 z-50 bg-[#F4F4F5]/80 backdrop-blur-xl border-b border-black/10"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#002FA7] text-white font-medium rounded-none px-6 py-3 hover:bg-[#00227A] transition-colors focus:ring-2 focus:ring-[#002FA7] focus:ring-offset-2",
+      "outline": "bg-transparent text-[#0A0A0A] border-2 border-[#0A0A0A] font-medium rounded-none px-6 py-3 hover:bg-[#0A0A0A] hover:text-white transition-colors"
+    },
+    "inputs": "bg-white border-2 border-black/10 rounded-none px-4 py-3 text-base focus:border-[#002FA7] focus:ring-0 transition-colors",
+    "map_container": "w-full h-[500px] lg:h-[70vh] bg-[#E5E5E5] border border-black/10 relative overflow-hidden"
+  },
+  "motion": {
+    "hover": "transition-all duration-300 ease-out",
+    "page_load": "framer-motion standard fade-up, stagger children by 0.1s"
+  },
+  "media": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1732783384071-0cdb7bbbad94?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHx0b3BvZ3JhcGhpYyUyMG1hcCUyMGFic3RyYWN0fGVufDB8fHx8MTc4MzExNjU5M3ww&ixlib=rb-4.1.0&q=85",
+      "description": "Abstract white and teal topographic paper cut pattern",
+      "usage": "Use as an absolute background image with opacity-30 or a mix-blend-mode in the public home page hero section to provide texture without overwhelming text."
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use Phosphor Icons (@phosphor-icons/react) for technical interface icons like download, map-pin, layers, etc.",
+    "The Map Preview on the detail page must be powered by react-leaflet or leaflet directly. Use pure HTML/Tailwind for the layout surrounding it.",
+    "Implement 'data-testid' attributes on all interactive elements (search bar, filter buttons, download buttons, login inputs).",
+    "Avoid using standard Shadcn Card components for the public view; instead use raw div structures with the 'card_default' style provided in these guidelines to maintain the sharp, un-rounded Brutalist edge.",
+    "For Admin dashboard forms (uploading maps), strictly use Shadcn components (Form, Input, Textarea, Button) but customize borders to rounded-none where possible to fit the theme.",
+    "The Hero section of the public page should feature a massive heading, an overline, and a prominent Search/Filter bar spanning across the center."
+  ]
+}
