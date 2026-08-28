@@ -1,34 +1,38 @@
-.App-logo {
-    height: 40vmin;
+.App { min-height: 100vh; }
+
+/* Grain overlay for hero */
+.grain::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.25;
     pointer-events: none;
+    mix-blend-mode: multiply;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Sharp button hover */
+.btn-primary {
+    background: #002FA7; color: #fff; padding: 12px 24px;
+    font-weight: 600; border: none; cursor: pointer;
+    transition: background 200ms ease;
 }
-
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.btn-primary:hover { background: #00227A; }
+.btn-outline {
+    background: transparent; color: #0A0A0A;
+    border: 2px solid #0A0A0A; padding: 10px 22px;
+    font-weight: 600; cursor: pointer;
+    transition: all 200ms ease;
 }
+.btn-outline:hover { background: #0A0A0A; color: #fff; }
 
-.App-link {
-    color: #61dafb;
+.card-sharp {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    transition: all 300ms ease;
 }
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.card-sharp:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+    border-color: rgba(0,0,0,0.24);
 }
