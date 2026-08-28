@@ -140,7 +140,6 @@ async def login(payload: LoginIn, response: Response):
         "id": str(user["_id"]),
         "email": email,
         "role": user.get("role", "admin"),
-        "token": token,
     }
 
 

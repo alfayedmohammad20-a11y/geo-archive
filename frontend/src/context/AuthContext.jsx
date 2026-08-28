@@ -24,8 +24,8 @@ export function AuthProvider({ children }) {
   }, [fetchMe]);
 
   const login = async (email, password) => {
+    // Backend sets an httpOnly `access_token` cookie on success.
     const { data } = await http.post("/auth/login", { email, password });
-    if (data.token) localStorage.setItem("token", data.token);
     setUser({ id: data.id, email: data.email, role: data.role });
     return data;
   };
@@ -36,7 +36,6 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.warn("logout request failed:", err);
     }
-    localStorage.removeItem("token");
     setUser(null);
   };
 

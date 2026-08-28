@@ -65,12 +65,10 @@ export default function AdminDashboard() {
       fd.append("name", name);
       fd.append("description", description);
       fd.append("file", file);
-      const token = localStorage.getItem("token");
       const res = await fetch(`${API}/maps`, {
         method: "POST",
         body: fd,
         credentials: "include",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
