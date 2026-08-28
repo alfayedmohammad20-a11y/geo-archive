@@ -35,7 +35,9 @@ function FitBounds({ bounds, map }) {
     if (bounds && map) {
       try {
         map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
-      } catch {}
+      } catch (err) {
+        console.warn("fitBounds failed:", err);
+      }
     }
   }, [bounds, map]);
   return null;

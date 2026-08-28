@@ -261,6 +261,7 @@ async def download_as_kml(map_id: str):
     if not doc:
         raise HTTPException(status_code=404, detail="Map not found")
     data = _load_file(doc)
+    kml: bytes = b""
     try:
         kml = file_to_kml_bytes(data, doc["ext"], name=doc["name"])
     except Exception as e:
@@ -281,6 +282,7 @@ async def as_geojson(map_id: str):
     if not doc:
         raise HTTPException(status_code=404, detail="Map not found")
     data = _load_file(doc)
+    gj: dict = {}
     try:
         gj = file_to_geojson(data, doc["ext"])
     except Exception as e:

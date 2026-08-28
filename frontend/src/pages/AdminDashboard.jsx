@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Navigate, Link } from "react-router-dom";
 import {
   UploadSimple,
@@ -31,14 +31,14 @@ export default function AdminDashboard() {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const { data } = await http.get("/maps");
     setMaps(data);
-  };
+  }, []);
 
   useEffect(() => {
     if (user) load();
-  }, [user]);
+  }, [user, load]);
 
   if (user === undefined)
     return (

@@ -1,0 +1,58 @@
+{
+  "summary": "Backend-only verification of Geo Archive (public URL https://geo-archive-3.preview.emergentagent.com). Created a pytest suite (44 tests: 42 passed, 2 xfail) covering health probes, auth (bearer + httpOnly cookie, negative cases, CORS, bcrypt/seed posture), and the full maps lifecycle for KML, KMZ and zipped-Shapefile uploads (upload -> list -> search -> detail -> download -> /kml -> /geojson -> soft delete). The two previously flagged refactor risks are confirmed fixed: /api/maps/{id}/kml and /api/maps/{id}/geojson initialize kml/gj before try/except and return a clean handled 500 ('Conversion failed' / 'Parse failed') on corrupt input instead of an UnboundLocalError. Emergent Object Storage round-trip is byte-exact. No blocking backend defects found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/health, /healthz", "issue": "Return 200 {status:ok} on the internal port 8001, but are NOT reachable via the public ingress (only /api/* is proxied; the public URL serves the React HTML). Fine for k8s probes, but the requirement 'all three return 200' only holds externally for /api/health."},
+      {"endpoint": "/api/auth/login", "issue": "No brute-force protection / rate limiting: 6+ consecutive wrong-password attempts all return plain 401 with no lockout (429/423). Playbook expects lockout after 5 failures. Marked xfail in test_auth.py and test_security.py."},
+      {"endpoint": "/api/auth/login", "issue": "Cookie is set with secure=False, samesite='lax'. It works in preview only because the edge proxy rewrites it to 'Secure; SameSite=None; Partitioned'. For cross-site production use it should be set explicitly as secure=True, samesite='none'."},
+      {"endpoint": "CORS middleware", "issue": "allow_origins comes from CORS_ORIGINS='*' together with allow_credentials=True. Starlette happens to echo the request origin so credentialed calls work today, but explicit origins should be configured (wildcard + credentials is invalid per spec)."},
+      {"endpoint": "/api/maps/{id}/kml, /api/maps/{id}/geojson", "issue": "Unparseable/corrupt uploaded file yields HTTP 500; a malformed stored artifact is arguably a 422/400 class error. Also note POST /api/maps accepts any bytes with an allowed extension (no content validation at upload time), so bad files are only detected at export."},
+      {"endpoint": "DELETE /api/maps/{id}", "issue": "Soft delete only; the object in Emergent Object Storage is never removed (storage leak over time). Also deleting an already soft-deleted id returns 200 {ok:true} instead of 404 (matched_count based, not is_deleted aware)."},
+      {"endpoint": "GET /api/maps", "issue": "Hard-coded 500-document cap with no pagination/limit/skip params; will silently truncate as the archive grows."},
+      {"endpoint": "POST /api/maps", "issue": "Returns 200 for a resource creation; 201 would be correct. Also no max upload size enforcement (whole file is read into memory via await file.read())."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/conftest.py",
+    "/app/backend/tests/test_health.py",
+    "/app/backend/tests/test_auth.py",
+    "/app/backend/tests/test_maps.py",
+    "/app/backend/tests/test_security.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Add login rate limiting / lockout after 5 failed attempts (playbook requirement).",
+    "Set the auth cookie with secure=True and samesite='none' (path='/') so cross-site browser auth does not depend on proxy rewriting.",
+    "Configure CORS_ORIGINS with explicit origins instead of '*' since allow_credentials=True.",
+    "Delete (or mark for GC) the stored object when a map is deleted; make DELETE return 404 for an already-deleted map.",
+    "Add pagination to GET /api/maps instead of the fixed 500-doc cap, and enforce a max upload size.",
+    "Optional: validate the uploaded file parses (KML/KMZ/SHP) at upload time and return 400, so /kml and /geojson never 500."
+  ],
+  "critical_code_review_comments": [
+    "server.py: kml/gj pre-initialization is correct now, but the `kml: bytes = b''` / `gj: dict = {}` placeholders are dead code because every failure path raises HTTPException - they can be removed for clarity.",
+    "server.py uses deprecated @app.on_event('startup'/'shutdown'); migrate to the lifespan context manager (FastAPI deprecation).",
+    "storage.py reads EMERGENT_LLM_KEY at import time into a module constant and uses blocking `requests` calls inside async endpoints (put_object/get_object), which blocks the event loop on large uploads/downloads - wrap in run_in_threadpool or use httpx.AsyncClient.",
+    "server.py get_current_admin calls ObjectId(payload['sub']) without guarding bson.errors.InvalidId; a forged-but-signed token with a non-ObjectId sub would raise 500 (unreachable today since only this server issues tokens, but worth hardening).",
+    "delete_map does not filter on is_deleted, so it re-deletes silently; also no audit trail of who deleted a map."
+  ],
+  "updated_files": [
+    "/app/backend/tests/conftest.py",
+    "/app/backend/tests/test_health.py",
+    "/app/backend/tests/test_auth.py",
+    "/app/backend/tests/test_maps.py",
+    "/app/backend/tests/test_security.py"
+  ],
+  "success_rate": {"backend": "100% (42/42 functional assertions passed; 2 known-gap tests marked xfail)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "No persistent seed data. Tests created TEST_KML_Map, TEST_KMZ_Map, TEST_SHP_Map and TEST_Corrupt_Zip and soft-deleted all of them via the API teardown fixture; verified 0 live TEST_ maps remain in the DB.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": true,
+  "test_credentials": "admin@geoarchive.io / admin123 (verified working; bcrypt hash in DB starts with $2b$, exactly one admin doc, seed idempotent)",
+  "context_for_next_testing_agent": "Backend is healthy and fully covered by /app/backend/tests (run: cd /app/backend && python -m pytest tests/ -v). pytest.ini forces -n 2 --dist loadscope, so keep dependent tests inside one class (TestKmlLifecycle is order-dependent via test_01..test_09 and a class-scoped created_ids fixture). /health and /healthz must be tested on http://localhost:8001 (ingress only proxies /api/*). OPTIONS preflight on the public URL is answered by Cloudflare (returns '*' without allow-credentials), so app-level CORS is asserted internally in test_security.py. Frontend (Leaflet map, admin upload UI, download/export buttons) has NOT been tested at all - that is the remaining work.",
+  "rca_of_the_issue": "Previously flagged undefined-variable risk at server.py:265 (kml) and :285 (gj) is resolved: both are initialized before the try block and every exception path raises HTTPException, so no UnboundLocalError is possible. Confirmed empirically by uploading a deliberately corrupt .zip and hitting both endpoints - each returned a clean 500 with detail 'Conversion failed: ...' / 'Parse failed: ...' and the backend log shows no traceback."
+}

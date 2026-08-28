@@ -27,7 +27,8 @@ export default function MapDetail() {
       try {
         const { data } = await http.get(`/maps/${id}`);
         setM(data);
-      } catch {
+      } catch (err) {
+        console.warn("Failed to load map:", err);
         setNotFound(true);
       }
     })();

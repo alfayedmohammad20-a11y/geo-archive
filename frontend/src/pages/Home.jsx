@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { MagnifyingGlass, MapTrifold, ArrowRight, Stack } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
@@ -69,7 +69,7 @@ export default function Home() {
   const [maps, setMaps] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const load = async (search = "") => {
+  const load = useCallback(async (search = "") => {
     setLoading(true);
     try {
       const { data } = await http.get("/maps", {
@@ -79,11 +79,11 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const submit = (e) => {
     e.preventDefault();
