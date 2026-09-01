@@ -63,9 +63,10 @@ def auth_token(test_credentials):
     )
     if r.status_code != 200:
         pytest.fail(f"Auth failed {r.status_code}: {r.text[:300]}")
-    token = r.json().get("token")
+    # Login sets an httpOnly cookie; body no longer carries a token.
+    token = r.cookies.get("access_token") or r.json().get("token")
     if not token:
-        pytest.fail("No token in login response")
+        pytest.fail("No access_token cookie in login response")
     return token
 
 

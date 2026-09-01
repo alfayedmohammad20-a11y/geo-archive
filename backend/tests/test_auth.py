@@ -16,7 +16,7 @@ class TestAuth:
         data = r.json()
         assert data["email"] == test_credentials["email"].lower()
         assert data["role"] == "admin"
-        assert isinstance(data["token"], str) and len(data["token"]) > 20
+        assert "token" not in data, "Login body must NOT expose the JWT (httpOnly cookie only)"
         assert isinstance(data["id"], str) and len(data["id"]) > 0
         assert "password" not in data and "password_hash" not in data
         # httpOnly cookie assertions

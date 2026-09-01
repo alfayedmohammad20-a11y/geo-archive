@@ -56,6 +56,18 @@ function MapCard({ m, i }) {
         <p className="text-sm text-[#52525B] leading-relaxed line-clamp-3 min-h-[3.5rem]">
           {m.description || "No description provided."}
         </p>
+        {m.tags && m.tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {m.tags.slice(0, 5).map((t) => (
+              <span
+                key={t}
+                className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 bg-[#F4F4F5] border border-black/10 text-[#52525B]"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
         <div className="mt-6 flex items-center gap-2 text-[#002FA7] font-mono text-xs uppercase tracking-widest">
           View & Download <ArrowRight size={14} weight="bold" />
         </div>
@@ -68,26 +80,50 @@ export default function Home() {
   const [q, setQ] = useState("");
   const [maps, setMaps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [allTags, setAllTags] = useState([]);
+  const [activeTags, setActiveTags] = useState([]);
 
-  const load = useCallback(async (search = "") => {
+  const load = useCallback(async (search = "", tags = []) => {
     setLoading(true);
     try {
-      const { data } = await http.get("/maps", {
-        params: search ? { q: search } : {},
-      });
+      const params = {};
+      if (search) params.q = search;
+      if (tags.length) params.tags = tags.join(",");
+      const { data } = await http.get("/maps", { params });
       setMaps(data);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  const loadTags = useCallback(async () => {
+    try {
+      const { data } = await http.get("/tags");
+      setAllTags(data);
+    } catch (err) {
+      console.warn("failed to load tags", err);
+    }
+  }, []);
+
   useEffect(() => {
-    load();
-  }, [load]);
+    load("", []);
+    loadTags();
+  }, [load, loadTags]);
+
+  useEffect(() => {
+    load(q, activeTags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTags]);
 
   const submit = (e) => {
     e.preventDefault();
-    load(q);
+    load(q, activeTags);
+  };
+
+  const toggleTag = (t) => {
+    setActiveTags((prev) =>
+      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+    );
   };
 
   return (
@@ -122,7 +158,7 @@ export default function Home() {
             <input
               data-testid="search-input"
               type="text"
-              placeholder="Search by name or description…"
+              placeholder="Search by name, description or tag…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
               className="flex-1 bg-transparent px-4 py-4 outline-none text-base"
@@ -135,6 +171,45 @@ export default function Home() {
               Search
             </button>
           </form>
+
+          {allTags.length > 0 && (
+            <div
+              data-testid="tag-filter-bar"
+              className="mt-6 flex flex-wrap gap-2 max-w-3xl"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[#52525B] self-center mr-1">
+                Filter:
+              </span>
+              {allTags.map((t) => {
+                const on = activeTags.includes(t);
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    data-testid={`tag-chip-${t}`}
+                    onClick={() => toggleTag(t)}
+                    className={`font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 border transition-colors ${
+                      on
+                        ? "bg-[#002FA7] text-white border-[#002FA7]"
+                        : "bg-transparent text-[#0A0A0A] border-black/20 hover:border-black"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+              {activeTags.length > 0 && (
+                <button
+                  type="button"
+                  data-testid="tag-clear"
+                  onClick={() => setActiveTags([])}
+                  className="font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 text-[#FF3B30] hover:underline"
+                >
+                  Clear ×
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="mt-16 grid grid-cols-3 max-w-lg gap-8 border-t border-black/10 pt-8">
             <div>

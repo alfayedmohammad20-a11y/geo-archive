@@ -71,9 +71,24 @@ export default function MapDetail() {
           <h1 data-testid="map-title" className="font-display text-4xl lg:text-6xl leading-none mb-6">
             {m.name}
           </h1>
-          <p className="text-base text-[#52525B] leading-relaxed mb-10 max-w-2xl">
+          <p className="text-base text-[#52525B] leading-relaxed mb-6 max-w-2xl">
             {m.description || "No description provided."}
           </p>
+          {m.tags && m.tags.length > 0 && (
+            <div
+              data-testid="detail-tags"
+              className="flex flex-wrap gap-2 mb-10"
+            >
+              {m.tags.map((t) => (
+                <span
+                  key={t}
+                  className="font-mono text-[11px] uppercase tracking-widest px-3 py-1 border border-black/15 bg-white text-[#0A0A0A]"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
           <MapPreview mapId={m.id} />
         </div>
 

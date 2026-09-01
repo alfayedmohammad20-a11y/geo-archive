@@ -28,6 +28,7 @@ export default function AdminDashboard() {
   const [maps, setMaps] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -64,6 +65,7 @@ export default function AdminDashboard() {
       const fd = new FormData();
       fd.append("name", name);
       fd.append("description", description);
+      fd.append("tags", tags);
       fd.append("file", file);
       const res = await fetch(`${API}/maps`, {
         method: "POST",
@@ -77,6 +79,7 @@ export default function AdminDashboard() {
       toast.success("Map uploaded");
       setName("");
       setDescription("");
+      setTags("");
       setFile(null);
       document.getElementById("file-input").value = "";
       await load();
@@ -140,6 +143,17 @@ export default function AdminDashboard() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none resize-none"
+          />
+
+          <label className="block font-mono text-xs uppercase tracking-widest text-[#52525B] mb-2">
+            Tags <span className="text-[#A1A1AA] normal-case tracking-normal">(comma-separated, optional)</span>
+          </label>
+          <input
+            data-testid="upload-tags"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="e.g. europe, hydrology, protected-areas"
+            className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none"
           />
 
           <label className="block font-mono text-xs uppercase tracking-widest text-[#52525B] mb-2">

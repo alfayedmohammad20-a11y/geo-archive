@@ -165,19 +165,42 @@ def _map_doc_out(doc: dict) -> dict:
         "size": doc.get("size", 0),
         "original_filename": doc.get("original_filename", ""),
         "created_at": doc.get("created_at", ""),
+        "tags": doc.get("tags", []),
     }
 
 
+def _parse_tags(raw: str) -> list[str]:
+    if not raw:
+        return []
+    seen: list[str] = []
+    for part in raw.split(","):
+        t = part.strip().lower()
+        if t and t not in seen and len(t) <= 40:
+            seen.append(t)
+    return seen[:12]
+
+
 @api.get("/maps")
-async def list_maps(q: Optional[str] = None):
+async def list_maps(q: Optional[str] = None, tags: Optional[str] = None):
     query: dict = {"is_deleted": {"$ne": True}}
     if q:
         query["$or"] = [
             {"name": {"$regex": q, "$options": "i"}},
             {"description": {"$regex": q, "$options": "i"}},
+            {"tags": {"$regex": q, "$options": "i"}},
         ]
+    tag_list = _parse_tags(tags or "")
+    if tag_list:
+        query["tags"] = {"$in": tag_list}
     docs = await db.maps.find(query).sort("created_at", -1).to_list(500)
     return [_map_doc_out(d) for d in docs]
+
+
+@api.get("/tags")
+async def list_tags():
+    """Return all distinct tags across live maps, sorted alphabetically."""
+    tags = await db.maps.distinct("tags", {"is_deleted": {"$ne": True}})
+    return sorted([t for t in tags if isinstance(t, str) and t])
 
 
 @api.get("/maps/{map_id}")
@@ -192,6 +215,7 @@ async def get_map(map_id: str):
 async def create_map(
     name: str = Form(...),
     description: str = Form(""),
+    tags: str = Form(""),
     file: UploadFile = File(...),
     _: dict = Depends(get_current_admin),
 ):
@@ -218,6 +242,7 @@ async def create_map(
         "size": result.get("size", len(data)),
         "storage_path": result["path"],
         "original_filename": filename,
+        "tags": _parse_tags(tags),
         "is_deleted": False,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
