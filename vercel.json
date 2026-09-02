@@ -1,6 +1,10 @@
 {
-  "buildCommand": "cd frontend && DISABLE_ESLINT_PLUGIN=true CI=false npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true CI=false npm run build",
+  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "frontend/build",
+  "env": {
+    "DISABLE_ESLINT_PLUGIN": "true",
+    "CI": "false"
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
