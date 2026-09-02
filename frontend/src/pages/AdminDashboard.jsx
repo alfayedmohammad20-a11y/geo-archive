@@ -33,7 +33,7 @@ export default function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
 
   const load = useCallback(async () => {
-    const { data } = await http.get("/maps");
+    setMaps(Array.isArray(data) ? : data?.maps || []);
     setMaps(data);
   }, []);
 
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
             </div>
           )}
           <div className="space-y-3">
-            {maps.map((m) => (
+            {Array.isArray(maps) && maps.map((m) => (
               <div
                 key={m.id}
                 data-testid={`admin-row-${m.id}`}
