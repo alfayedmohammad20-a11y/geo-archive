@@ -33,8 +33,8 @@ export default function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
 
   const load = useCallback(async () => {
-    setMaps(Array.isArray(data) ? : data?.maps || []);
-    setMaps(data);
+    const { data } = await http.get("/maps");
+    setMaps(Array.isArray(data) ? data : data?.maps || [];
   }, []);
 
   useEffect(() => {
