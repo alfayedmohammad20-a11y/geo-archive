@@ -5,6 +5,10 @@
     {
       "source": "/api/(.*)",
       "destination": "/backend/server.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
     }
   ]
 }
