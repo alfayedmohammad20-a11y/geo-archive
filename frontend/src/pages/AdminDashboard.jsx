@@ -67,7 +67,7 @@ export default function AdminDashboard() {
       fd.append("description", description);
       fd.append("tags", tags);
       fd.append("file", file);
-      const res = await fetch(`${API}/maps`, {
+      const res = await fetch(`${API}/api/maps`, {
         method: "POST",
         body: fd,
         credentials: "include",
