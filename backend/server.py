@@ -30,8 +30,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
-from gis_utils import file_to_geojson, file_to_kml_bytes
-from storage import APP_NAME, get_object, init_storage, put_object
+from backend.gis_utils import file_to_geojson, file_to_kml_bytes
+from backend.storage import APP_NAME, get_object, init_storage, put_object
 
 # ------------------ Setup ------------------
 
