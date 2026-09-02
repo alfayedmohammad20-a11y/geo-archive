@@ -5,6 +5,11 @@
     "DISABLE_ESLINT_PLUGIN": "true",
     "CI": "false"
   },
+  "functions": {
+    "backend/*.py": {
+      "runtime": "python3.9"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
