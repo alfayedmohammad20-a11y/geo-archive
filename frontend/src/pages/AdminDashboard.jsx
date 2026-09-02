@@ -34,7 +34,7 @@ export default function AdminDashboard() {
 
   const load = useCallback(async () => {
     const { data } = await http.get("/maps");
-    setMaps(Array.isArray(data) ? data : data?.maps || [];
+    setMaps(Array.isArray(data) ? data : data?.maps || []);
   }, []);
 
   useEffect(() => {
