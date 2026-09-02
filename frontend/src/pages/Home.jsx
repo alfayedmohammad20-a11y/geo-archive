@@ -58,7 +58,7 @@ function MapCard({ m, i }) {
         </p>
         {m.tags && m.tags.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-1.5">
-            Array.isArray(m.tags && m.tags.slice(0, 5).map((t) => (
+            Array.isArray(m.tags) && m.tags.slice(0, 5).map((t) => (
               <span
                 key={t}
                 className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 bg-[#F4F4F5] border border-black/10 text-[#52525B]"
