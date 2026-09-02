@@ -180,7 +180,7 @@ export default function Home() {
               <span className="font-mono text-[10px] uppercase tracking-widest text-[#52525B] self-center mr-1">
                 Filter:
               </span>
-              Array.isArray(allTags) && allTags.map((t) => {
+              {Array.isArray(allTags) && allTags.map((t) => {
                 const on = activeTags.includes(t);
                 return (
                   <button
