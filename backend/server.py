@@ -343,22 +343,27 @@ app.add_middleware(
 async def startup():
     # Seed admin
     admin_email = os.environ.get("ADMIN_EMAIL", "alfayedmohammad20@gmail.com").lower()
-    admin_password = os.environ("ADMIN_PASSWORD", "admin123")
+    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    
     existing = await db.users.find_one({"email": admin_email})
+    new_hash = hash_password(admin_password)
+    
     if existing is None:
-        await db.users.insert_one(
-            {
-                "email": admin_email,
-                "password_hash": hash_password(admin_password),
-                "name": "Admin",
-                "role": "admin",
-                "created_at": datetime.now(timezone.utc).isoformat(),
-            }
-        )
+        await db.users.insert_one({
+            "email": admin_email,
+            "password_hash": new_hash,
+            "name": "Admin",
+            "role": "admin",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        })
         logger.info("Seeded admin user: %s", admin_email)
-    elif not verify_password(admin_password, existing["password_hash"]):
+    else:
+        # Selalu perbarui hash password agar sesuai dengan admin_password terbaru
         await db.users.update_one(
             {"email": admin_email},
+            {"$set": {"password_hash": new_hash}}
+        )
+        logger.info("Updated admin password for: %s", admin_email)
             {"$set": {"password_hash": hash_password(admin_password)}},
         )
     await db.users.create_index("email", unique=True)
