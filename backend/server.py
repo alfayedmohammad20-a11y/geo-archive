@@ -342,8 +342,8 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     # Seed admin
-    admin_email = os.environ["ADMIN_EMAIL"].lower()
-    admin_password = os.environ["ADMIN_PASSWORD"]
+    admin_email = os.environ.get("ADMIN_EMAIL", "alfayedmohammad20@gmail.com").lower()
+    admin_password = os.environ("ADMIN_PASSWORD", "admin123")
     existing = await db.users.find_one({"email": admin_email})
     if existing is None:
         await db.users.insert_one(
