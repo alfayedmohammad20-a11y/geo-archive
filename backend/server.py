@@ -38,9 +38,10 @@ from storage import APP_NAME, get_object, init_storage, put_object
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-mongo_url = os.environ["MONGO_URL"]
+mongo_url = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ["DB_NAME"]]
+db_name = os.environ.get("DB_NAME", "geo_archive")
+db = client[db_name]
 
 app = FastAPI(title="Geo Archive")
 api = APIRouter(prefix="/api")
@@ -358,16 +359,15 @@ async def startup():
         })
         logger.info("Seeded admin user: %s", admin_email)
     else:
-        # Selalu perbarui hash password agar sesuai dengan admin_password terbaru
         await db.users.update_one(
             {"email": admin_email},
             {"$set": {"password_hash": new_hash}}
         )
         logger.info("Updated admin password for: %s", admin_email)
-            {"$set": {"password_hash": hash_password(admin_password)}},
-        )
+        
     await db.users.create_index("email", unique=True)
     await db.maps.create_index("id", unique=True)
+    
     # Storage
     try:
         init_storage()
@@ -378,3 +378,5 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     client.close()
+handler = app
+application = app
