@@ -121,7 +121,7 @@ class MapOut(BaseModel):
 
 # ------------------ Auth ------------------
 
-@api.post("/auth/login")
+@api.post("/api/auth/login")
 async def login(payload: LoginIn, response: Response):
     email = payload.email.strip().lower()
     user = await db.users.find_one({"email": email})
@@ -144,13 +144,13 @@ async def login(payload: LoginIn, response: Response):
     }
 
 
-@api.post("/auth/logout")
+@api.post("/api/auth/logout")
 async def logout(response: Response):
     response.delete_cookie("access_token", path="/")
     return {"ok": True}
 
 
-@api.get("/auth/me")
+@api.get("/api/auth/me")
 async def me(user: dict = Depends(get_current_admin)):
     return {"id": user["_id"], "email": user["email"], "role": user.get("role")}
 
@@ -181,7 +181,7 @@ def _parse_tags(raw: str) -> list[str]:
     return seen[:12]
 
 
-@api.get("/maps")
+@api.get("/api/maps")
 async def list_maps(q: Optional[str] = None, tags: Optional[str] = None):
     query: dict = {"is_deleted": {"$ne": True}}
     if q:
@@ -197,14 +197,14 @@ async def list_maps(q: Optional[str] = None, tags: Optional[str] = None):
     return [_map_doc_out(d) for d in docs]
 
 
-@api.get("/tags")
+@api.get("/api/tags")
 async def list_tags():
     """Return all distinct tags across live maps, sorted alphabetically."""
     tags = await db.maps.distinct("tags", {"is_deleted": {"$ne": True}})
     return sorted([t for t in tags if isinstance(t, str) and t])
 
 
-@api.get("/maps/{map_id}")
+@api.get("/api/maps/{map_id}")
 async def get_map(map_id: str):
     doc = await db.maps.find_one({"id": map_id, "is_deleted": {"$ne": True}})
     if not doc:
@@ -212,7 +212,7 @@ async def get_map(map_id: str):
     return _map_doc_out(doc)
 
 
-@api.post("/maps")
+@api.post("/api/maps")
 async def create_map(
     name: str = Form(...),
     description: str = Form(""),
@@ -251,7 +251,7 @@ async def create_map(
     return _map_doc_out(doc)
 
 
-@api.delete("/maps/{map_id}")
+@api.delete("/api/maps/{map_id}")
 async def delete_map(map_id: str, _: dict = Depends(get_current_admin)):
     res = await db.maps.update_one(
         {"id": map_id}, {"$set": {"is_deleted": True}}
@@ -266,7 +266,7 @@ def _load_file(doc: dict) -> bytes:
     return data
 
 
-@api.get("/maps/{map_id}/download")
+@api.get("/api/maps/{map_id}/download")
 async def download_map(map_id: str):
     doc = await db.maps.find_one({"id": map_id, "is_deleted": {"$ne": True}})
     if not doc:
@@ -280,7 +280,7 @@ async def download_map(map_id: str):
     )
 
 
-@api.get("/maps/{map_id}/kml")
+@api.get("/api/maps/{map_id}/kml")
 async def download_as_kml(map_id: str):
     doc = await db.maps.find_one({"id": map_id, "is_deleted": {"$ne": True}})
     if not doc:
@@ -301,7 +301,7 @@ async def download_as_kml(map_id: str):
     )
 
 
-@api.get("/maps/{map_id}/geojson")
+@api.get("/api/maps/{map_id}/geojson")
 async def as_geojson(map_id: str):
     doc = await db.maps.find_one({"id": map_id, "is_deleted": {"$ne": True}})
     if not doc:
@@ -315,7 +315,7 @@ async def as_geojson(map_id: str):
     return gj
 
 
-@api.get("/")
+@api.get("/api/")
 async def root():
     return {"service": "geo-archive", "status": "ok"}
 
