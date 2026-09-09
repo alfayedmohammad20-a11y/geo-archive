@@ -121,6 +121,7 @@ class MapOut(BaseModel):
 
 # ------------------ Auth ------------------
 
+@api.post("/auth/login")
 @api.post("/api/auth/login")
 async def login(payload: LoginIn, response: Response):
     email = payload.email.strip().lower()
