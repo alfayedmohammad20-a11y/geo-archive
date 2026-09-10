@@ -116,15 +116,28 @@ export default function MapDetail() {
                   {m.original_filename}
                 </dd>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Added</dt>
                 <dd className="text-[#0A0A0A] font-medium">
                   {new Date(m.created_at).toLocaleDateString()}
                 </dd>
               </div>
+              {m.certificate_status && (
+        <div className="flex justify-between border-b border-black/10 pb-2">
+          <dt className="text-[#525258]">Status Sertifikat</dt>
+          <dd className="text-[#0A0A0A] font-medium">{m.certificate_status}</dd>
+        </div>
+      )}
+
+      {m.area_size && (
+        <div className="flex justify-between">
+          <dt className="text-[#525258]">Luas Wilayah</dt>
+          <dd className="text-[#0A0A0A] font-medium">{m.area_size} m²</dd>
+        </div>
+      )}
             </dl>
           </div>
-
+          
           <a
             data-testid="download-original-btn"
             href={fileUrl(m.id, "download")}
