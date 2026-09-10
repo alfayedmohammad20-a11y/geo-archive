@@ -31,6 +31,8 @@ export default function AdminDashboard() {
   const [tags, setTags] = useState("");
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [certificateStatus, setCertificateStatus] = useState("")
+  const [areaSize, setAreaSize] = useState("")
 
   const load = useCallback(async () => {
     const { data } = await http.get("/maps");
@@ -81,6 +83,8 @@ export default function AdminDashboard() {
       setDescription("");
       setTags("");
       setFile(null);
+      setCertificateStatus("");
+      setAreaSize("");
       document.getElementById("file-input").value = "";
       await load();
     } catch (e) {
@@ -157,6 +161,30 @@ export default function AdminDashboard() {
           />
 
           <label className="block font-mono text-xs uppercase tracking-widest text-[#52525B] mb-2">
+  Status Sertifikat
+</label>
+<select
+  value={certificateStatus}
+  onChange={(e) => setCertificateStatus(e.target.value)}
+  className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none"
+>
+  <option value="">-- Pilih Status --</option>
+  <option value="Sertifikat Hak Milik (SHM)">Sertifikat Hak Milik (SHM)</option>
+  <option value="Hak Pakai (HP)">Hak Pakai (HP)</option>
+  <option value="Hak Guna Bangunan (HGB)">Hak Guna Bangunan (HGB)</option>
+  <option value="Belum Bersertifikat">Belum Bersertifikat</option>
+</select>
+
+<label className="block font-mono text-xs uppercase tracking-widest text-[#525258] mb-2">
+  Luas Wilayah (m²)
+</label>
+<input
+  type="text"
+  placeholder="e.g. 1500"
+  value={areaSize}
+  onChange={(e) => setAreaSize(e.target.value)}
+  className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none"
+/>
             File (.kml / .kmz / .zip shapefile)
           </label>
           <input
