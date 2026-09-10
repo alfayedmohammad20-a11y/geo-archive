@@ -11,3 +11,4 @@ google-genai
 google-api-core
 pyshp
 simplekml
+python-multipart
