@@ -179,16 +179,16 @@ export default function AdminDashboard() {
   Luas Wilayah (m²)
 </label>
 <input
-  type="text"
-  placeholder="e.g. 1500"
-  value={areaSize}
-  onChange={(e) => setAreaSize(e.target.value)}
-  className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none"
-/>
+          type="text"
+          placeholder="e.g. 1500"
+          value={areaSize}
+          onChange={(e) => setAreaSize(e.target.value)}
+          className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none"
+        />
 
-          <label className="block font-mono text-xs uppercase tracking-widest text-[#525258] mb-2"
-            File (.kml / .kmz / .zip shapefile)
-          </label>
+        <label className="block font-mono text-xs uppercase tracking-widest text-[#525258] mb-2">
+          File (.kml / .kmz / .zip shapefile)
+        </label>
           <input
             id="file-input"
             data-testid="upload-file"
