@@ -10,3 +10,4 @@ requests>=2.32.0
 google-genai
 google-api-core
 pyshp
+simplekml
