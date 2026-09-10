@@ -187,7 +187,7 @@ export default function AdminDashboard() {
 />
 
           <label className="block" font-mono text-xs uppercase tracking-widest text-[#525258] mb-2"
-            File (.kml / .kmz / .zip shapfile)
+            File (.kml / .kmz / .zip shapefile)
           </label>
           <input
             id="file-input"
