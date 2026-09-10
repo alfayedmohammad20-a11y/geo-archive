@@ -185,7 +185,9 @@ export default function AdminDashboard() {
   onChange={(e) => setAreaSize(e.target.value)}
   className="w-full bg-white border-2 border-black/10 px-4 py-3 mb-6 focus:border-[#002FA7] outline-none"
 />
-            File (.kml / .kmz / .zip shapefile)
+
+          <label className=block" font-mono text-xs uppercase tracking-widest text-[#525258] outline-none"
+            File (.kml / .kmz / .zip shapfile)
           </label>
           <input
             id="file-input"
