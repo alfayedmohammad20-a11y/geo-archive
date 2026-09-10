@@ -166,7 +166,7 @@ def _map_doc_out(doc: dict) -> dict:
         "name": doc["name"],
         "description": doc.get("description", ""),
         "certificate_status": doc.get("certificate_status", ""),
-        "area_size" doc.get("area_size", ""),
+        "area_size": doc.get("area_size", ""),
         "ext": doc["ext"],
         "size": doc.get("size", 0),
         "original_filename": doc.get("original_filename", ""),
