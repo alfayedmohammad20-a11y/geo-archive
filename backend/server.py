@@ -209,7 +209,7 @@ async def list_tags():
     return sorted([t for t in tags if isinstance(t, str) and t])
 
 
-@api.get("/maps/{map_idid}")
+@api.get("/maps/{map_id}")
 @api.get("/api/maps/{map_id}")
 async def get_map(map_id: str):
     doc = await db.maps.find_one({"id": map_id, "is_deleted": {"$ne": True}})
