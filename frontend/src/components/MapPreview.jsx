@@ -139,7 +139,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
               );
           }}
           />
-      <FitBounds bounds={bounds} map={map} />
+          <FitBounds bounds={bounds} map={map} />
     </MapContainer>
   )}
 </div>
