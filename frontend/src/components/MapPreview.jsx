@@ -104,18 +104,34 @@ export default function MapPreview({ mapId }) {
               data={geojson}
               style={{ color: "#002FA7", weight: 2, fillOpacity: 0.15 }}
               pointToLayer={(f, latlng) => L.marker(latlng)}
-              onEachFeature={(f, layer) => {
-                const p = f.properties || {};
-                const name = p.name || p.NAME || "Feature";
-                const rows = Object.entries(p)
-                  .slice(0, 8)
-                  .map(
-                    ([k, v]) =>
-                      `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`
-                  )
-                  .join("");
-                layer.bindPopup(`<div style="font-family:'IBM Plex Sans'"><b>${name}</b>${rows ? "<hr/>" + rows : ""}</div>`);
-              }}
+             onEachFeature={(f, layer) => {
+          const p = f.properties || {};
+          const name = p.name || p.NAME || "Feature";
+
+          // Mengambil metadata langsung dari data geojson backend atau properti fitur
+          const certStatus = p.certificate_status || geojson?.certificate_status || "";
+          const area = p.area_size || geojson?.area_size || "";
+
+          let extraInfo = "";
+          if (certStatus) {
+            extraInfo += `<div><b>Status Sertifikat</b>: ${certStatus}</div>`;
+          }
+          if (area) {
+            extraInfo += `<div><b>Luas Wilayah</b>: ${area} m²</div>`;
+          }
+
+          const rows = Object.entries(p)
+            .filter(([k]) => k !== "certificate_status" && k !== "area_size")
+            .slice(0, 8)
+            .map(([k, v]) => `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`)
+            .join("");
+
+          const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
+
+          layer.bindPopup(
+            `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
+          );
+        }}
             />
           )}
           <FitBounds bounds={bounds} map={map} />
