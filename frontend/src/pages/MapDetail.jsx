@@ -89,7 +89,12 @@ export default function MapDetail() {
               ))}
             </div>
           )}
-          <MapPreview mapId={m.id} />
+          <MapPreview
+            mapId={map.id}
+            certificateStatus={map.certificate_status}
+            areaSize={map.area_size}
+          />
+            
         </div>
 
         <aside className="lg:col-span-4 space-y-4">
