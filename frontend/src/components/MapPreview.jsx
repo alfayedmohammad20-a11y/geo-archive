@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import L from "leaflet";
-import http from "../api/http";
+import http from "../utils/http";
 
 function FitBounds({ bounds, map }) {
   useEffect(() => {
