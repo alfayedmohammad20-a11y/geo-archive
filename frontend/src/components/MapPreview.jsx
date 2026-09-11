@@ -114,7 +114,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
               data={geojson}
               style={{ color: "#002FA7", weight: 2, fillOpacity: 0.15 }}
               pointToLayer={(f, latlng) => L.marker(latlng)}
-             onEachFeature={(f, layer) => {
+            onEachFeature={(f, layer) => {
           const p = f.properties || {};
           const name = p.name || p.NAME || "Feature";
 
@@ -138,10 +138,8 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
             `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
           );
         }}
-  
-          <FitBounds bounds={bounds} map={map} />
-        </MapContainer>
-      )}
-    </div>
+      />
+      <FitBounds bounds={bounds} map={map} />
+    </MapContainer>
   );
 }
