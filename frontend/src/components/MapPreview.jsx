@@ -45,6 +45,7 @@ function FitBounds({ bounds, map }) {
 
 export default function MapPreview({ mapId }) {
   const [geojson, setGeojson] = useState(null);
+  const [mapMeta, setMapMeta] = useState(null);
   const [error, setError] = useState(null);
   const [map, setMap] = useState(null);
 
@@ -52,13 +53,22 @@ export default function MapPreview({ mapId }) {
     let mounted = true;
     (async () => {
       try {
-        const { data } = await http.get(`/maps/${mapId}/geojson`);
-        if (mounted) setGeojson(data);
+        // Ambil geojson dan data metadata map sekaligus
+        const [geojsonRes, mapRes] = await Promise.all([
+          http.get(`/maps/${mapId}/geojson`),
+          http.get(`/maps/${mapId}`)
+        ]);
+
+        if (mounted) {
+          setGeojson(geojsonRes.data || geojsonRes);
+          setMapMeta(mapRes.data || mapRes);
+        }
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           setError(
             e.response?.data?.detail || "Preview unavailable for this file"
           );
+        }
       }
     })();
     return () => {
