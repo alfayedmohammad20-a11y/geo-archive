@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
-import http from "axios";
+import axios from "axios";
 
-function FitBounds({ bounds, map }) {
+function FitBounds({ bounds }) {
+  const map = useMap();
   useEffect(() => {
     if (map && bounds) {
       map.fitBounds(bounds, { padding: [20, 20] });
@@ -15,7 +16,6 @@ function FitBounds({ bounds, map }) {
 export default function MapPreview({ mapId, certificateStatus, areaSize }) {
   const [geojson, setGeojson] = useState(null);
   const [error, setError] = useState(null);
-  const [map, setMap] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -74,7 +74,6 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
         zoom={2}
         style={{ width: "100%", height: "100%" }}
         scrollWheelZoom
-        whenCreated={setMap}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
@@ -116,7 +115,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
             }}
           />
         )}
-        <FitBounds bounds={bounds} map={map} />
+        <FitBounds bounds={bounds} />
       </MapContainer>
     </div>
   );
