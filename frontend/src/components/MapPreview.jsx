@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import http from "../lib/http";
 
 function FitBounds({ bounds }) {
   const map = useMap();
   useEffect(() => {
     if (map && bounds) {
-      map.fitBounds(bounds, { padding: [20, 20] });
+      map.fitBounds(bounds, { padding: [50, 50] });
     }
   }, [map, bounds]);
   return null;
@@ -83,7 +84,13 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
           <GeoJSON
             key={JSON.stringify(geojson)}
             data={geojson}
-            style={{ color: "#ff2d55", weight: 3, fillColor: "#ff2d55", fillOpacity: 0.35 }}
+            style={{
+              color: "#ff2d55",
+              weight: 3,
+              opacity: 0.9,
+              fillColor: "#ff2d55",
+              fillOpacity: 0.35,
+            }}
             pointToLayer={(f, latlng) => L.marker(latlng)}
             onEachFeature={(f, layer) => {
               const p = f.properties || {};
