@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import http from "../lib/http";
+import axios from "axios";
+
+// Ambil URL backend dari env atau gunakan domain backend proyek kamu
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  ""; // Jika kosong, axios akan pakai path relatif
 
 function FitBounds({ bounds }) {
   const map = useMap();
@@ -22,7 +28,17 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
     let mounted = true;
     (async () => {
       try {
-        const { data } = await http.get(`/maps/${mapId}/geojson`);
+        const endpoint = API_BASE_URL
+          ? `${API_BASE_URL}/maps/${mapId}/geojson`
+          : `/maps/${mapId}/geojson`;
+
+        const { data } = await axios.get(endpoint);
+        
+        // Jika response tidak sengaja berupa string HTML
+        if (typeof data === "string" && data.includes("<!doctype html>")) {
+          throw new Error("Backend URL returned HTML instead of GeoJSON");
+        }
+
         if (mounted) setGeojson(data);
       } catch (e) {
         if (mounted) {
