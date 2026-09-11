@@ -109,36 +109,37 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {hasFeatures && (
-            <GeoJSON
-              data={geojson}
-              style={{ color: "#002FA7", weight: 2, fillOpacity: 0.15 }}
-              pointToLayer={(f, latlng) => L.marker(latlng)}
-            onEachFeature={(f, layer) => {
-          const p = f.properties || {};
-          const name = p.name || p.NAME || "Feature";
+         {hasFeatures && (
+        <GeoJSON
+          data={geojson}
+          style={{ color: "#002FA7", weight: 2, fillOpacity: 0.15 }}
+          pointToLayer={(f, latlng) => L.marker(latlng)}
+          onEachFeature={(f, layer) => {
+            const p = f.properties || {};
+            const name = p.name || p.NAME || "Feature";
 
-          let extraInfo = "";
-          if (certificateStatus) {
-            extraInfo += `<div><b>Status Sertifikat</b>: ${certificateStatus}</div>`;
-          }
-          if (areaSize) {
-            extraInfo += `<div><b>Luas Wilayah</b>: ${areaSize} m²</div>`;
-          }
+            let extraInfo = "";
+            if (certificateStatus) {
+              extraInfo += `<div><b>Status Sertifikat</b>: ${certificateStatus}</div>`;
+            }
+            if (areaSize) {
+              extraInfo += `<div><b>Luas Wilayah</b>: ${areaSize} m²</div>`;
+            }
 
-          const rows = Object.entries(p)
-            .filter(([k]) => k !== "certificate_status" && k !== "area_size")
-            .slice(0, 8)
-            .map(([k, v]) => `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`)
-            .join("");
+            const rows = Object.entries(p)
+              .filter(([k]) => k !== "certificate_status" && k !== "area_size")
+              .slice(0, 8)
+              .map(([k, v]) => `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`)
+              .join("");
 
-          const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
+            const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
 
-          layer.bindPopup(
-            `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
-          );
-        }}
-      />
+            layer.bindPopup(
+              `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
+            );
+          }}
+        />
+      )}
       <FitBounds bounds={bounds} map={map} />
     </MapContainer>
   );
