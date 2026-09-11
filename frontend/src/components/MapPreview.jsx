@@ -81,8 +81,9 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
         />
         {hasFeatures && (
           <GeoJSON
+            key={JSON.stringify(geojson)}
             data={geojson}
-            style={{ color: "#002FA7", weight: 2, fillOpacity: 0.15 }}
+            style={{ color: "#ff2d55", weight: 3, fillColor: "#ff2d55", fillOpacity: 0.35 }}
             pointToLayer={(f, latlng) => L.marker(latlng)}
             onEachFeature={(f, layer) => {
               const p = f.properties || {};
