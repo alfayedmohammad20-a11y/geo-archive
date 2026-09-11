@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import L from "leaflet";
-import http from "../utils/http";
+import http from "axios";
 
 function FitBounds({ bounds, map }) {
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
     let mounted = true;
     (async () => {
       try {
-        const { data } = await http.get(`/maps/${mapId}/geojson`);
+        const { data } = await axios.get(`/maps/${mapId}/geojson`);
         if (mounted) setGeojson(data);
       } catch (e) {
         if (mounted) {
