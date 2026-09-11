@@ -43,7 +43,7 @@ function FitBounds({ bounds, map }) {
   return null;
 }
 
-export default function MapPreview({ mapId }) {
+export default function MapPreview({ mapId, certificateStatus, areaSize }) {
   const [geojson, setGeojson] = useState(null);
   const [mapMeta, setMapMeta] = useState(null);
   const [error, setError] = useState(null);
@@ -118,16 +118,12 @@ export default function MapPreview({ mapId }) {
           const p = f.properties || {};
           const name = p.name || p.NAME || "Feature";
 
-          // Mengambil metadata langsung dari data geojson backend atau properti fitur
-          const certStatus = p.certificate_status || geojson?.certificate_status || "";
-          const area = p.area_size || geojson?.area_size || "";
-
           let extraInfo = "";
-          if (certStatus) {
-            extraInfo += `<div><b>Status Sertifikat</b>: ${certStatus}</div>`;
+          if (certificateStatus) {
+            extraInfo += `<div><b>Status Sertifikat</b>: ${certificateStatus}</div>`;
           }
-          if (area) {
-            extraInfo += `<div><b>Luas Wilayah</b>: ${area} m²</div>`;
+          if (areaSize) {
+            extraInfo += `<div><b>Luas Wilayah</b>: ${areaSize} m²</div>`;
           }
 
           const rows = Object.entries(p)
@@ -142,8 +138,7 @@ export default function MapPreview({ mapId }) {
             `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
           );
         }}
-            />
-          )}
+  
           <FitBounds bounds={bounds} map={map} />
         </MapContainer>
       )}
