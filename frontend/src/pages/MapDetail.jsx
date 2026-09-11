@@ -91,9 +91,9 @@ export default function MapDetail() {
       )}
 
       <MapPreview
-        mapId={map.id}
-        certificateStatus={map.certificate_status}
-        areaSize={map.area_size}
+        mapId={m.id}
+        certificateStatus={m.certificate_status}
+        areaSize={m.area_size}
       />
             
         </div>
