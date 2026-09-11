@@ -137,10 +137,11 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
             layer.bindPopup(
               `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
             );
-          }}
-        />
-      )}
+        }}
+      />
       <FitBounds bounds={bounds} map={map} />
     </MapContainer>
-  );
+  )}
+</div>
+);
 }
