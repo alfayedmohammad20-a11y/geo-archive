@@ -156,16 +156,16 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
               }
 
               const rows = Object.entries(p)
-                .filter(([k]) => k !== "certificate_status" && k !== "area_size")
-                .slice(0, 8)
-                .map(([k, v]) => `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`)
-                .join("");
+      .filter(([k]) => k !== "certificate_status" && k !== "area_size")
+      .slice(0, 8)
+      .map(([k, v]) => "<div><b>" + k + "</b>: " + String(v).slice(0, 80) + "</div>")
+      .join("");
 
-              const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
+    const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
 
-              layer.bindPopup(
-                `<div style="font-family: sans-serif"><b>${name}</b><hr/>${content}</div>`
-              );
+    layer.bindPopup(
+      '<div style="font-family: sans-serif"><b>' + name + "</b><hr/>" + content + "</div>"
+    );
             }}
           />
         )}
