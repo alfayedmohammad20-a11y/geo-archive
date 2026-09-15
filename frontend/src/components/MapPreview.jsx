@@ -4,11 +4,10 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 
-// Ambil URL backend dari env atau gunakan domain backend proyek kamu
 const API_BASE_URL =
   process.env.REACT_APP_API_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
-  ""; // Jika kosong, axios akan pakai path relatif
+  ""; 
 
 function FitBounds({ bounds }) {
   const map = useMap();
