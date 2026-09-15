@@ -7,7 +7,7 @@ import axios from "axios";
 const API_BASE_URL =
   process.env.REACT_APP_API_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
-  ""; 
+  "";
 
 function FitBounds({ bounds }) {
   const map = useMap();
@@ -91,8 +91,9 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
         scrollWheelZoom
       >
         <TileLayer
-          attribution='&copy; Google Maps"
-          url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+          attribution="&copy; Google Maps"
+          url="https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+          subdomains={["mt0", "mt1", "mt2", "mt3"]}
           maxZoom={20}
         />
         {hasFeatures && (
@@ -133,7 +134,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
               const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
 
               layer.bindPopup(
-                `<div style="font-family: sans-serif"><b>${name}</b><hr/>${content}</div>'
+                `<div style="font-family: sans-serif"><b>${name}</b><hr/>${content}</div>`
               );
             }}
           />
