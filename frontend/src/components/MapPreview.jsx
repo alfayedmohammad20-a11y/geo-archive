@@ -4,62 +4,92 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 
-const API_BASE_URL = "/api/backend";
+// Perbaikan icon default Leaflet agar tidak hilang/broken
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
-function FitBounds({ bounds }) {
+const API_BASE_URL = "https://geo-archive-3.emergent.host";
+
+function MapResizerAndFitter({ bounds }) {
   const map = useMap();
+
   useEffect(() => {
-    if (map && bounds) {
-      map.fitBounds(bounds, { padding: [50, 50] });
-    }
+    if (!map) return;
+    
+    // Paksa Leaflet untuk menghitung ulang ukuran kontainer agar tidak blank/0px
+    setTimeout(() => {
+      map.invalidateSize();
+      if (bounds) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, 200);
   }, [map, bounds]);
+
   return null;
 }
 
 export default function MapPreview({ mapId, certificateStatus, areaSize }) {
   const [geojson, setGeojson] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
+    
+    if (!mapId) {
+      setLoading(false);
+      setError("No Map ID provided");
+      return;
+    }
+
     (async () => {
       try {
-        const endpoint = API_BASE_URL
-          ? `${API_BASE_URL}/maps/${mapId}/geojson`
-          : `/maps/${mapId}/geojson`;
-
-        const { data } = await axios.get(endpoint);
+        setLoading(true);
+        setError(null);
         
+        const endpoint = `${API_BASE_URL}/maps/${mapId}/geojson`;
+        const { data } = await axios.get(endpoint);
+
         if (typeof data === "string" && data.includes("<!doctype html>")) {
-          throw new Error("Backend URL returned HTML instead of GeoJSON");
+          throw new Error("Backend returned HTML response");
         }
 
-        if (mounted) setGeojson(data);
+        if (mounted) {
+          setGeojson(data);
+          setLoading(false);
+        }
       } catch (e) {
         if (mounted) {
+          console.error("Fetch GeoJSON Error:", e);
           setError(
-            e.response?.data?.detail || "Preview unavailable for this file"
+            e.response?.data?.detail || e.message || "Preview unavailable for this file"
           );
+          setLoading(false);
         }
       }
     })();
+
     return () => {
       mounted = false;
     };
   }, [mapId]);
 
-  if (error) {
+  if (loading) {
     return (
-      <div className="h-full flex items-center justify-center text-red-500 text-sm">
-        {error}
+      <div className="w-full h-[400px] min-h-[350px] flex items-center justify-center bg-gray-900 text-gray-300 text-sm rounded-lg">
+        Loading map preview...
       </div>
     );
   }
 
-  if (!geojson) {
+  if (error || !geojson) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-        Loading map preview...
+      <div className="w-full h-[400px] min-h-[350px] flex items-center justify-center bg-gray-900 text-red-400 text-sm rounded-lg">
+        {error || "Preview unavailable for this file"}
       </div>
     );
   }
@@ -70,22 +100,22 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
     const b = layer.getBounds();
     if (b.isValid()) bounds = b;
   } catch (e) {
-    // ignore
+    console.warn("Invalid bounds:", e);
   }
 
   const hasFeatures =
     geojson &&
-    geojson.features &&
-    Array.isArray(geojson.features) &&
-    geojson.features.length > 0;
+    (geojson.type === "Feature" ||
+      geojson.type === "FeatureCollection" ||
+      (Array.isArray(geojson.features) && geojson.features.length > 0));
 
   return (
-    <div className="relative w-full h-full">
+    <div className="w-full h-[400px] min-h-[350px] relative rounded-lg overflow-hidden border border-gray-700">
       <MapContainer
         center={[0, 0]}
         zoom={2}
-        style={{ width: "100%", height: "100%" }}
-        scrollWheelZoom
+        style={{ width: "100%", height: "100%", minHeight: "350px" }}
+        scrollWheelZoom={true}
       >
         <TileLayer
           attribution="&copy; Google Maps"
@@ -93,6 +123,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
           subdomains={["mt0", "mt1", "mt2", "mt3"]}
           maxZoom={20}
         />
+
         {hasFeatures && (
           <GeoJSON
             key={JSON.stringify(geojson)}
@@ -118,14 +149,9 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
               }
 
               const rows = Object.entries(p)
-                .filter(
-                  ([k]) => k !== "certificate_status" && k !== "area_size"
-                )
+                .filter(([k]) => k !== "certificate_status" && k !== "area_size")
                 .slice(0, 8)
-                .map(
-                  ([k, v]) =>
-                    `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`
-                )
+                .map(([k, v]) => `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`)
                 .join("");
 
               const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
@@ -136,7 +162,8 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
             }}
           />
         )}
-        <FitBounds bounds={bounds} />
+
+        <MapResizerAndFitter bounds={bounds} />
       </MapContainer>
     </div>
   );
