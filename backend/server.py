@@ -339,6 +339,14 @@ async def root():
 
 # ------------------ App wiring ------------------
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(api)
 
 
@@ -347,15 +355,6 @@ app.include_router(api)
 @app.get("/api/health")
 async def health():
     return {"status": "ok"}
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 @app.on_event("startup")
 async def startup():
