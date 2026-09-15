@@ -149,10 +149,10 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
 
               let extraInfo = "";
               if (certificateStatus) {
-                extraInfo += `<div><b>Status Sertifikat</b>: ${certificateStatus}</div>`;
+                extraInfo += "<div><b>Status Sertifikat</b>: " + certificateStatus + "</div>";
               }
               if (areaSize) {
-                extraInfo += `<div><b>Luas Wilayah</b>: ${areaSize} m²</div>`;
+                extraInfo += "<div><b>Luas Wilayah</b>: " + areaSize + " m²</div>";
               }
 
               const rows = Object.entries(p)
