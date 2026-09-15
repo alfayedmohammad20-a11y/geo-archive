@@ -1,12 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/api/backend/:path*",
+      "destination": "https://geo-archive-3.emergent.host/:path*"
     }
   ]
 }
