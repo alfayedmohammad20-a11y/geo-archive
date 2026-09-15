@@ -4,7 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 
-const API_BASE_URL = "https://geo-archive-3.emergent.host";
+const API_BASE_URL = "/api/backend";
 
 function FitBounds({ bounds }) {
   const map = useMap();
