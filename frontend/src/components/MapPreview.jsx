@@ -58,7 +58,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
         setLoading(true);
         setError(null);
         
-        const endpoint = `${API_BASE_URL}/maps/${targetMapId}/geojson';
+        const endpoint = API_BASE_URL + "/maps/" + targetMapId + "/geojson";
         const { data } = await axios.get(endpoint);
 
         if (typeof data === "string" && data.includes("<!doctype html>")) {
