@@ -33,7 +33,6 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
 
         const { data } = await axios.get(endpoint);
         
-        // Jika response tidak sengaja berupa string HTML
         if (typeof data === "string" && data.includes("<!doctype html>")) {
           throw new Error("Backend URL returned HTML instead of GeoJSON");
         }
@@ -134,7 +133,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
               const content = [extraInfo, rows].filter(Boolean).join("<hr/>");
 
               layer.bindPopup(
-                `<div style="font-family:'IBM Plex Sans'"><b>${name}</b><hr/>${content}</div>`
+                `<div style="font-family: sans-serif"><b>${name}</b><hr/>${content}</div>'
               );
             }}
           />
