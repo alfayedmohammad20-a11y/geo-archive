@@ -40,7 +40,14 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
   useEffect(() => {
     let mounted = true;
     
-    if (!mapId) {
+    // Jika mapId dari prop kosong, ambil langsung dari URL browser
+    let targetMapId = mapId;
+    if (!targetMapId && typeof window !== "undefined") {
+      const pathSegments = window.location.pathname.split("/");
+      targetMapId = pathSegments[pathSegments.length - 1];
+    }
+
+    if (!targetMapId || targetMapId === "map") {
       setLoading(false);
       setError("No Map ID provided");
       return;
@@ -51,7 +58,7 @@ export default function MapPreview({ mapId, certificateStatus, areaSize }) {
         setLoading(true);
         setError(null);
         
-        const endpoint = `${API_BASE_URL}/maps/${mapId}/geojson`;
+        const endpoint = `${API_BASE_URL}/maps/${targetMapId}/geojson';
         const { data } = await axios.get(endpoint);
 
         if (typeof data === "string" && data.includes("<!doctype html>")) {
