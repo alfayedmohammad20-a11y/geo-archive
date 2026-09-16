@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
 
   const fetchMe = useCallback(async () => {
     try {
-      const { data } = await http.get("/api/auth/me");
+      const { data } = await http.get("/auth/me");
       setUser(data);
     } catch (err) {
       // Not authenticated — expected for public visitors
@@ -25,14 +25,14 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     // Backend sets an httpOnly `access_token` cookie on success.
-    const { data } = await http.post("/api/auth/login", { email, password });
+    const { data } = await http.post("/auth/login", { email, password });
     setUser({ id: data.id, email: data.email, role: data.role });
     return data;
   };
 
   const logout = async () => {
     try {
-      await http.post("/api/auth/logout");
+      await http.post("/auth/logout");
     } catch (err) {
       console.warn("logout request failed:", err);
     }
