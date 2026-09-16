@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { Navigate, Link } from "react-router-dom";
 import {
@@ -72,10 +73,11 @@ export default function AdminDashboard() {
     if (certificateStatus) fd.append("certificate_status", certificateStatus);
     if (areaSize) fd.append("area_size", areaSize);
 
-    await API.post("/maps", fd, {
+    await axios.post("https://geo-archive-3.emergent.host/api/maps", fd, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
     });
 
     toast.success("Map uploaded");
