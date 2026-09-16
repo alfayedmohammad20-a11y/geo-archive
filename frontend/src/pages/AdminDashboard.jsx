@@ -69,7 +69,10 @@ export default function AdminDashboard() {
       fd.append("description", description);
       fd.append("tags", tags);
       fd.append("file", file);
-      const res = await fetch(`${API}/maps`, {
+      if (certificateStatus) fd.append("certificate_status", certificateStatus);
+      if (areaSize) fd.append("area_size", areaSize);
+
+      const res = await fetch("https://geo-archive-3.emergent.host/api/maps", {
         method: "POST",
         body: fd,
         credentials: "include",
