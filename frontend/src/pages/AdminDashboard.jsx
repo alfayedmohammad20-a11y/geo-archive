@@ -77,7 +77,6 @@ export default function AdminDashboard() {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      withCredentials: true,
     });
 
     toast.success("Map uploaded");
