@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BACKEND = process.env.REACT_APP_BACKEND_URL || "https://geo-archive-3.emergent.host";
-export const API = BACKEND ? `${BACKEND}/api`;
+export const API = `${BACKEND}/api`;
 
 // All auth is handled via httpOnly cookies set by the backend on /auth/login.
 // withCredentials ensures the browser attaches those cookies on every request.
