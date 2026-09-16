@@ -73,14 +73,10 @@ export default function AdminDashboard() {
     if (certificateStatus) fd.append("certificate_status", certificateStatus);
     if (areaSize) fd.append("area_size", areaSize);
 
-    const token = localStorage.getItem("token") || localStorage.getItem("access_token");
-
-    await axios.post("https://geo-archive-3.emergent.host/api/maps", fd, {
+    await http.post("/api/maps", fd, {
       headers: {
         "Content-Type": "multipart/form-data",
-        ...(token ? { Authorization: 'Bearer ${token}' } : {}),
       },
-      withCredentials: true,
     });
 
     toast.success("Map uploaded");
