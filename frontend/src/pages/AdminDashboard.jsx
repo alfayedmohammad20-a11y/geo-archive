@@ -35,27 +35,23 @@ export default function AdminDashboard() {
   const [certificateStatus, setCertificateStatus] = useState("")
   const [areaSize, setAreaSize] = useState("")
 
- const load = useCallback(async () => {
-  try {
-    const res = await http.get("/maps");
-    const list = Array.isArray(res.data) ? res.data : (res.data?.maps || res.data?.data || []);
-    setMaps(list);
-  } catch (err) {
-    console.error("Gagal load maps:", err);
-  }
-}, []);
-  
+const load = useCallback(async () => {
+    try {
+      const res = await http.get("/maps");
+      // Mencegah crash jika struktur data backend berbeda
+      const list = Array.isArray(res?.data) 
+        ? res.data 
+        : (res?.data?.maps || res?.data?.data || []);
+      setMaps(list);
+    } catch (err) {
+      console.error("Failed to fetch maps:", err);
+      setMaps([]);
+    }
+  }, []);
+
   useEffect(() => {
     if (user) load();
   }, [user, load]);
-
-  if (user === undefined)
-    return (
-      <div className="max-w-7xl mx-auto px-6 py-24 font-mono text-xs">
-        Loading…
-      </div>
-    );
-  if (!user) return <Navigate to="/admin/login" replace />;
 
   const upload = async (e) => {
     e.preventDefault();
@@ -63,41 +59,50 @@ export default function AdminDashboard() {
       toast.error("Name and file are required");
       return;
     }
+
     const ext = file.name.split(".").pop().toLowerCase();
     if (!["kml", "kmz", "zip"].includes(ext)) {
-      toast.error("Only .kml, .kmz or .zip (shapefile) files are supported");
+      toast.error("Only .kml, .kmz or .zip files are supported");
       return;
     }
+
     setUploading(true);
-   try {
-    const fd = new FormData();
-    fd.append("name", name);
-    fd.append("description", description);
-    fd.append("tags", tags);
-    fd.append("file", file);
-    if (certificateStatus) fd.append("certificate_status", certificateStatus);
-    if (areaSize) fd.append("area_size", areaSize);
+    try {
+      const fd = new FormData();
+      fd.append("name", name);
+      fd.append("description", description);
+      fd.append("tags", tags);
+      fd.append("file", file);
+      if (certificateStatus) fd.append("certificate_status", certificateStatus);
+      if (areaSize) fd.append("area_size", areaSize);
 
-    await http.post("/maps", fd, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+      // Request upload murni via http instance
+      await http.post("/maps", fd, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    toast.success("Map uploaded");
-    setName("");
-    setDescription("");
-    setTags("");
-    setFile(null);
-    setCertificateStatus("");
-    setAreaSize("");
-    if (document.getElementById("file-input")) {
-      document.getElementById("file-input").value = "";
-    }
+      toast.success("Map uploaded");
+
+      // Reset Form State
+      setName("");
+      setDescription("");
+      setTags("");
+      setFile(null);
+      setCertificateStatus("");
+      setAreaSize("");
+      
+      const fileInput = document.getElementById("file-input");
+      if (fileInput) fileInput.value = "";
+
+      // Reload list peta
       await load();
     } catch (e) {
-      toast.error(e.message);
+      console.error("Upload error:", e);
+      toast.error(e.response?.data?.detail || e.message || "Failed to upload");
     } finally {
+      // WAJIB KELUAR DARI STATE UPLOADING
       setUploading(false);
     }
   };
