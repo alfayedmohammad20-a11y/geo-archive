@@ -5,7 +5,7 @@ export const API = `${BACKEND}/api`;
 
 export const http = axios.create({
   baseURL: API,
-  withCredentials: false,
+  withCredentials: true,
 });
 
 export function fileUrl(mapId, kind = "download") {
