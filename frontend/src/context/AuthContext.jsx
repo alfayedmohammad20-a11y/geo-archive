@@ -24,11 +24,13 @@ export function AuthProvider({ children }) {
   }, [fetchMe]);
 
   const login = async (email, password) => {
-    // Backend sets an httpOnly `access_token` cookie on success.
     const { data } = await http.post("/auth/login", { email, password });
     setUser({ id: data.id, email: data.email, role: data.role });
-    return data;
-  };
+  if (data.token || data.access_token) || data.access_token);
+    localStorage.setItem("token", data.token || data.access_token);
+  }
+  return data;
+};
 
   const logout = async () => {
     try {
