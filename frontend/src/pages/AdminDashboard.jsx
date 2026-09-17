@@ -73,9 +73,12 @@ export default function AdminDashboard() {
     if (certificateStatus) fd.append("certificate_status", certificateStatus);
     if (areaSize) fd.append("area_size", areaSize);
 
+    const token = localStorage.getItem("token");
+
     await http.post("/maps", fd, {
       headers: {
         "Content-Type": "multipart/form-data",
+        ...(token ? { Authorization: 'Bearer ${token}' } : {})
       },
     });
 
