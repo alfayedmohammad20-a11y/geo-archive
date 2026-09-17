@@ -37,17 +37,24 @@ export default function AdminDashboard() {
 
 const load = useCallback(async () => {
     try {
-      const res = await http.get("/maps");
-      // Mencegah crash jika struktur data backend berbeda
-      const list = Array.isArray(res?.data) 
-        ? res.data 
-        : (res?.data?.maps || res?.data?.data || []);
-      setMaps(list);
+      // Ambil data peta dengan urutan terbaru (sort=newest atau limit jika ada)
+      const res = await http.get("/maps?sort=newest&limit=50");
+
+      let list = [];
+      if (Array.isArray(res.data)) {
+        list = res.data;
+      } else if (res.data && Array.isArray(res.data.maps)) {
+        list = res.data.maps;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        list = res.data.data;
+      }
+
+      setMaps (list);
     } catch (err) {
-      console.error("Failed to fetch maps:", err);
+      console.error("Gagal memuat peta:", err);
       setMaps([]);
     }
-  }, []);
+}, [];
 
   useEffect(() => {
     if (user) load();
