@@ -73,7 +73,7 @@ export default function AdminDashboard() {
     if (certificateStatus) fd.append("certificate_status", certificateStatus);
     if (areaSize) fd.append("area_size", areaSize);
 
-    await http.post("/api/maps", fd, {
+    await http.post("/maps", fd, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
