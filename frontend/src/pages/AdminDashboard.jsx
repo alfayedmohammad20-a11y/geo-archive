@@ -35,11 +35,16 @@ export default function AdminDashboard() {
   const [certificateStatus, setCertificateStatus] = useState("")
   const [areaSize, setAreaSize] = useState("")
 
-  const load = useCallback(async () => {
-    const { data } = await http.get("/maps");
-    setMaps(Array.isArray(data) ? data : data?.maps || []);
-  }, []);
-
+ const load = useCallback(async () => {
+  try {
+    const res = await http.get("/maps");
+    const list = Array.isArray(res.data) ? res.data : (res.data?.maps || res.data?.data || []);
+    setMaps(list);
+  } catch (err) {
+    console.error("Gagal load maps:", err);
+  }
+}, []);
+  
   useEffect(() => {
     if (user) load();
   }, [user, load]);
@@ -73,12 +78,9 @@ export default function AdminDashboard() {
     if (certificateStatus) fd.append("certificate_status", certificateStatus);
     if (areaSize) fd.append("area_size", areaSize);
 
-    const token = localStorage.getItem("token");
-
     await http.post("/maps", fd, {
       headers: {
         "Content-Type": "multipart/form-data",
-        ...(token ? { Authorization: 'Bearer ${token}' } : {})
       },
     });
 
@@ -89,7 +91,9 @@ export default function AdminDashboard() {
     setFile(null);
     setCertificateStatus("");
     setAreaSize("");
+    if (document.getElementById("file-input")) {
       document.getElementById("file-input").value = "";
+    }
       await load();
     } catch (e) {
       toast.error(e.message);
