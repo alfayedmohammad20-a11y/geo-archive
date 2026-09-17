@@ -26,8 +26,8 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const { data } = await http.post("/auth/login", { email, password });
     setUser({ id: data.id, email: data.email, role: data.role });
-  if (data.token || data.access_token) || data.access_token);
-    localStorage.setItem("token", data.token || data.access_token);
+    if (data.token || data.access_token) {
+      localStorage.setItem("token", data.token || data.access_token);
   }
   return data;
 };
