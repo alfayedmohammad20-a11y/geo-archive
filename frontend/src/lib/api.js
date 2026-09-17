@@ -8,7 +8,7 @@ export const http = axios.create({
   withCredentials: false,
 });
 
-http.interceptors.request.use((config => {
+http.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = 'Bearer ${token}';
