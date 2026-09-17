@@ -54,7 +54,7 @@ const load = useCallback(async () => {
       console.error("Gagal memuat peta:", err);
       setMaps([]);
     }
-}, [];
+}, []);
 
   useEffect(() => {
     if (user) load();
