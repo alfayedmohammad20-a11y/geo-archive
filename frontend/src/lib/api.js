@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API = "/api";
+export const API = "https://geo-archive-3.emergent.host/api";
 
 export const http = axios.create({
   baseURL: API,
