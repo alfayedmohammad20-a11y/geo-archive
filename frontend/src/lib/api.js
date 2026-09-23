@@ -8,5 +8,5 @@ export const http = axios.create({
 });
 
 export function fileUrl (mapId, kind = "download") {
-  return '${API}/maps/${mapId}/${kind}';
+  return '/api/maps/${mapId}/${kind}';
 }
