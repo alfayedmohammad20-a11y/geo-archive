@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://geo-archive-3.emergent.host/:path*"
+      "destination": "https://geo-archive-3.emergent.host/api/:path*"
     }
   ]
 }
