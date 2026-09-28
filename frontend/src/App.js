@@ -1,33 +1,46 @@
-const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+import "@/App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/context/AuthContext";
+import Header from "@/components/Header";
+import Home from "@/pages/Home";
+import MapDetail from "@/pages/MapDetail";
+import AdminLogin from "@/pages/AdminLogin";
+import AdminDashboard from "@/pages/AdminDashboard";
 
-    try {
-      // Mengirim payload sebagai JSON biasa
-      const res = await http.post("/auth/login", {
-        username: username,
-        email: username,
-        password: password,
-      });
+function Footer() {
+  return (
+    <footer className="border-t border-black/10 mt-24">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="font-mono text-xs uppercase tracking-[0.2em] text-[#52525B]">
+          GEO/ARCHIVE · Public geospatial repository
+        </div>
+        <div className="font-mono text-xs text-[#A1A1AA]">
+          Built with FastAPI · Leaflet · OpenStreetMap
+        </div>
+      </div>
+    </footer>
+  );
+}
 
-      if (res.data) {
-        const userRes = await http.get("/auth/me");
-        setUser(userRes.data);
-      }
-    } catch (err) {
-      // Coba fallback ke format token OAuth2 jika URL di atas 404
-      try {
-        const formData = new FormData();
-        formData.append("username", username);
-        formData.append("password", password);
-        await http.post("/auth/token", formData);
-        const userRes = await http.get("/auth/me");
-        setUser(userRes.data);
-      } catch (e2) {
-        setError("Login gagal. Periksa kembali username dan password Anda.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+function App() {
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <AuthProvider>
+          <Header />
+          <main>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/map/:id" element={<MapDetail />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Routes>
+          </main>
+          <Footer />
+        </AuthProvider>
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
