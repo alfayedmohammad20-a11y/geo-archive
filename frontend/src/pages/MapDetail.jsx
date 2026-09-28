@@ -74,27 +74,27 @@ export default function MapDetail() {
           <p className="text-base text-[#52525B] leading-relaxed mb-6 max-w-2xl">
             {m.description || "No description provided."}
           </p>
-         {m.tags && m.tags.length > 0 && (
-        <div
-          data-testid="detail-tags"
-          className="flex flex-wrap gap-2 mb-10"
-        >
-          {m.tags.map((t) => (
-            <span
-              key={t}
-              className="font-mono text-[11px] uppercase tracking-widest"
+          {m.tags && m.tags.length > 0 && (
+            <div
+              data-testid="detail-tags"
+              className="flex flex-wrap gap-2 mb-10"
             >
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <MapPreview
-        mapId={m.id}
-        certificateStatus={m.certificate_status}
-        areaSize={m.area_size}
-      />
+              {m.tags.map((t) => (
+                <span
+                  key={t}
+                  className="font-mono text-[11px] uppercase tracking-widest px-3 py-1 border border-black/15 bg-white text-[#0A0A0A]"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+          <MapPreview mapId={m.id} />
+          <MapPreview
+            mapId={map.id}
+            certificateStatus={map.certificate_status}
+            areaSize={map.area_size}
+          />
             
         </div>
 
@@ -143,7 +143,7 @@ export default function MapDetail() {
       )}
             </dl>
           </div>
-          
+
           <a
             data-testid="download-original-btn"
             href={fileUrl(m.id, "download")}
