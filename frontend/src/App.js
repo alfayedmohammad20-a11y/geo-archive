@@ -1,45 +1,56 @@
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/context/AuthContext";
-import Header from "@/components/Header";
-import Home from "@/pages/Home";
-import MapDetail from "@/pages/MapDetail";
-import AdminLogin from "@/pages/AdminLogin";
-import AdminDashboard from "@/pages/AdminDashboard";
-
-function Footer() {
-  return (
-    <footer className="border-t border-black/10 mt-24">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-[#52525B]">
-          GEO/ARCHIVE · Public geospatial repository
-        </div>
-        <div className="font-mono text-xs text-[#A1A1AA]">
-          Built with FastAPI · Leaflet · OpenStreetMap
-        </div>
-      </div>
-    </footer>
-  );
-}
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { http } from "./lib/api";
+import MapDetail from "./pages/MapDetail";
+// Import komponen halaman lain milikmu jika ada (misal: Login, Dashboard)
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    http.get("/auth/me")
+      .then((res) => {
+        setUser(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        // Jika 401 Unauthorized / belum login, set user null tanpa bikin error
+        setUser(null);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{ padding: "32px", textAlign: "center", fontFamily: "sans-serif" }}>
+        Memeriksa sesi login...
+      </div>
+    );
+  }
+
   return (
-    <div className="App">
-      <BrowserRouter>
-        <AuthProvider>
-          <Header />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/map/:id" element={<MapDetail />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
-          </main>
-          <Footer />
-        </AuthProvider>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* Arahkan ke halaman MapDetail atau halaman utama */}
+        <Route path="/maps/:id" element={<MapDetail />} />
+        
+        {/* Route fallback sederhana jika belum ada halaman login khusus */}
+        <Route
+          path="*"
+          element={
+            <div style={{ padding: "32px", textAlign: "center", fontFamily: "sans-serif" }}>
+              <h2>Geo Archive Portal</h2>
+              {user ? (
+                <p>Selamat datang, {user.name || user.email || "User"}!</p>
+              ) : (
+                <p>Sesi login belum aktif atau tidak ditemukan.</p>
+              )}
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
