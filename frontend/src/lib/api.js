@@ -7,7 +7,6 @@ export const http = axios.create({
   withCredentials: true,
 });
 
-export function fileUrl (mapId, kind = "download") {
-  return '/api/maps/${mapId}/${kind}';
-  return '${API}/maps/${mapId}/${kind}';
+export function fileUrl(mapId, kind = "download") {
+  return `/api/maps/${mapId}/${kind}`;
 }
