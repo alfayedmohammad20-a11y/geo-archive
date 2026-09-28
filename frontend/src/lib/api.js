@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const API = "/api";
-export const API = "https://geo-archive-3.emergent.host/api";
 
 export const http = axios.create({
   baseURL: API,
@@ -9,5 +8,6 @@ export const http = axios.create({
 });
 
 export function fileUrl (mapId, kind = "download") {
+  return '/api/maps/${mapId}/${kind}';
   return '${API}/maps/${mapId}/${kind}';
 }
