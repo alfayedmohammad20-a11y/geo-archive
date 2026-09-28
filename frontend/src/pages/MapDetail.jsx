@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { http, fileUrl } from "../lib/api";
-import { Download, ArrowLeft, GlobeStand, FileArchive } from "lucide-react";
+import { Download, ArrowLeft, Globe, FileArchive } from "lucide-react";
 
 export default function MapDetail() {
   const { id } = useParams();
