@@ -339,8 +339,6 @@ async def root():
 
 # ------------------ App wiring ------------------
 
-from fastapi.middleware.cors import CORSMiddleware
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -348,6 +346,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:5173",
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -367,10 +366,10 @@ async def startup():
     # Seed admin
     admin_email = os.environ.get("ADMIN_EMAIL", "alfayedmohammad20@gmail.com").lower()
     admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
-
+    
     existing = await db.users.find_one({"email": admin_email})
     new_hash = hash_password(admin_password)
-
+    
     if existing is None:
         await db.users.insert_one({
             "email": admin_email,
@@ -386,10 +385,10 @@ async def startup():
             {"$set": {"password_hash": new_hash}}
         )
         logger.info("Updated admin password for: %s", admin_email)
-
+        
     await db.users.create_index("email", unique=True)
     await db.maps.create_index("id", unique=True)
-
+    
     # Storage
     try:
         init_storage()
