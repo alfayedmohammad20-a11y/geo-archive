@@ -90,48 +90,21 @@ export default function MapDetail() {
               </div>
               <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Size</dt>
-                <dd className="text-[#0A0A0A] font-medium">
-                  {humanSize(m.size)}
-                </dd>
-              </div>
-              <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Filename</dt>
                 <dd className="text-[#0A0A0A] font-medium truncate max-w-[180px]">
                   {m.original_filename}
                 </dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-[#52525B]">Added</dt>
+              <div className="flex justify-between border-b border-black/10 pb-2">
+                <dt className="text-[#52525B]">Luas Wilayah</dt>
                 <dd className="text-[#0A0A0A] font-medium">
-                  {new Date(m.created_at).toLocaleDateString()}
+                  {m.area_size ? `${m.area_size} m²` : "—"}
                 </dd>
               </div>
-            </dl>
-          </div>
-
-          <a
-            data-testid="download-original-btn"
-            href={fileUrl(m.id, "download")}
-            className="btn-primary w-full flex items-center justify-center gap-2"
-          >
-            <Download size={18} weight="bold" />
-            Download {EXT_LABEL[m.ext]}
-          </a>
-          <a
-            data-testid="download-kml-btn"
-            href={fileUrl(m.id, "kml")}
-            className="btn-outline w-full flex items-center justify-center gap-2"
-          >
-            <GlobeStand size={18} weight="bold" />
-            Open in Google Earth Pro
-          </a>
-          <a
-            data-testid="download-geojson-btn"
-            href={fileUrl(m.id, "geojson")}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-black/15 hover:bg-black hover:text-white transition-colors text-sm font-mono uppercase tracking-widest"
-          >
-            <FileArchive size={16} weight="bold" />
-            GeoJSON
+              <div className="flex justify-between border-b border-black/10 pb-2">
+                <dt className="text-[#0A0A0A] font-medium text-right max-w-[180px]">
+                  {m.certificate_status || "—"}
+                </dd>
+              </div>
           </a>
 
           <div className="p-5 bg-[#0A0A0A] text-white">
