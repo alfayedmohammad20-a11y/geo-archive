@@ -250,7 +250,9 @@ async def create_map(
         "id": map_id,
         "name": name.strip(),
         "description": description.strip(),
-        "certificate_status": area_size.strip(),
+        "certificate_status": 
+    certificate_status.strip(),
+        "area_size": area_size.strip(),
         "ext": ext,
         "size": result.get("size", len(data)),
         "storage_path": result["path"],
