@@ -115,8 +115,33 @@ export default function MapDetail() {
             {new Date(m.created_at).toLocaleDateString()}
               </dd>
             </div>
+          <a
+            data-testid="download-original-btn"
+            href={fileUrl(m.id, "download")}
+            className="btn-primary w-full flex items-center justify-center gap-2"
+          >
+
+          <download size={18} weight="bold" />
           </a>
 
+          <a
+            data-testid="download-kml-btn"
+            href={fileUrl(m.id, "kml")}
+            className="btn-outline w-full flex items-center justify-center gap-2"
+          >
+            <GlobeStand size={18} weight="bold" />
+            Open in Google Earth Pro
+          </a>
+
+          <a
+            data-testid="download-gejson-btn"
+            href={fileUrl(m.id, "geojson")}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-black/15 hover:bg-black hover:text-white transtion-colors text-sm font-mono uppercase tracking-widest"
+          >
+            <fileArchive size={16} weight="bold" />
+            GeoJson
+          </a>
+  
           <div className="p-5 bg-[#0A0A0A] text-white">
             <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FF3B30] mb-2">
               // Tip
