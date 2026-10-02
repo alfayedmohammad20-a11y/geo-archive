@@ -43,10 +43,11 @@ function FitBounds({ bounds, map }) {
   return null;
 }
 
-export default function MapPreview({ mapId }) {
-  const [geojson, setGeojson] = useState(null);
-  const [error, setError] = useState(null);
-  const [map, setMap] = useState(null);
+export default function MapPreview({
+  mapId,
+  areaSize,
+  certificateStatus,
+}){
 
   useEffect(() => {
     let mounted = true;
@@ -120,7 +121,22 @@ export default function MapPreview({ mapId }) {
           )}
           <FitBounds bounds={bounds} map={map} />
         </MapContainer>
-      )}
-    </div>
-  );
-}
+      {(areaSize || certificateStatus) && (
+      <div className="absolute top-4 left-4 z-[1000] bg-white/95 border border-black/10 p-4 shadow-sm">
+      <div className="font-mono text-[10px] uppercase tracking-widest text-[002FA7] mb-2
+        //PROPERTY INFO
+      </div>
+
+      <div className="text-sm">
+        <div>
+          <span className="text-[52525B]">Luas:</span>{""}
+          <strong>{areaSize ? '${areaSize m² :"—"}</strong>
+            </div>
+
+        <div className="mt-1">
+            <span className="text-[52525B]">Status:</span>{""}
+            <strong>{certuficateStatus || "—"}</strong>
+          </div>
+        </div>
+      </div>
+    )}
