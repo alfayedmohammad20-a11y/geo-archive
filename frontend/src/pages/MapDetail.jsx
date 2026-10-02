@@ -122,6 +122,7 @@ export default function MapDetail() {
           >
 
           <download size={18} weight="bold" />
+            Download {EXT_LABEL[m.ext]}
           </a>
 
           <a
@@ -150,7 +151,6 @@ export default function MapDetail() {
               Downloaded .kml file? Double-click it and it will open directly in
               Google Earth Pro on your machine.
             </p>
-          </div>
         </aside>
       </div>
     </div>
