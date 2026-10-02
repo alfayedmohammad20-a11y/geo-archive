@@ -89,7 +89,7 @@ export default function MapDetail() {
                 </dd>
               </div>
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Size</dt>
+                <dt className="text-[#52525B]">Filename</dt>
                 <dd className="text-[#0A0A0A] font-medium truncate max-w-[180px]">
                   {m.original_filename}
                 </dd>
@@ -101,10 +101,16 @@ export default function MapDetail() {
                 </dd>
               </div>
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#0A0A0A] font-medium text-right max-w-[180px]">
+                <dt className="text-[#52525B]">Status Sertifikat</dt>
                   {m.certificate_status || "—"}
                 </dd>
               </div>
+            <div className="flex justify-between">
+              <dt className="text-[#52525B]">Added</dt>
+              <dd className="text-[#0A0A0A] font-medium">
+            {new Date(m.created_at).toLocaleDateString()}
+              </dd>
+            </div>
           </a>
 
           <div className="p-5 bg-[#0A0A0A] text-white">
