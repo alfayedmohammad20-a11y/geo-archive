@@ -1,19 +1,31 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Download, GlobeStand, FileArchive } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  Download,
+  GlobeStand,
+  FileArchive,
+} from "@phosphor-icons/react";
 import { http, fileUrl } from "@/lib/api";
 import MapPreview from "@/components/MapPreview";
 
-const EXT_LABEL = { kml: "KML", kmz: "KMZ", zip: "SHAPEFILE (SHP)" };
+const EXT_LABEL = {
+  kml: "KML",
+  kmz: "KMZ",
+  zip: "SHAPEFILE (SHP)",
+};
 
 function humanSize(n) {
   if (!n) return "—";
+
   const u = ["B", "KB", "MB", "GB"];
   let i = 0;
+
   while (n >= 1024 && i < u.length - 1) {
     n /= 1024;
     i++;
   }
+
   return `${n.toFixed(1)} ${u[i]}`;
 }
 
@@ -37,8 +49,13 @@ export default function MapDetail() {
     return (
       <div className="max-w-3xl mx-auto px-6 py-24 text-center">
         <h1 className="font-display text-4xl mb-4">Map not found</h1>
-        <Link to="/" className="btn-outline inline-flex items-center gap-2">
-          <ArrowLeft size={16} /> Back to Archive
+
+        <Link
+          to="/"
+          className="btn-outline inline-flex items-center gap-2"
+        >
+          <ArrowLeft size={16} />
+          Back to Archive
         </Link>
       </div>
     );
@@ -59,7 +76,8 @@ export default function MapDetail() {
         data-testid="back-link"
         className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[#52525B] hover:text-[#002FA7] mb-8"
       >
-        <ArrowLeft size={14} weight="bold" /> Back to Archive
+        <ArrowLeft size={14} weight="bold" />
+        Back to Archive
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -67,23 +85,31 @@ export default function MapDetail() {
           <div className="font-mono text-xs uppercase tracking-[0.3em] text-[#002FA7] mb-3">
             {EXT_LABEL[m.ext] || m.ext}
           </div>
-          <h1 data-testid="map-title" className="font-display text-4xl lg:text-6xl leading-none mb-6">
+
+          <h1
+            data-testid="map-title"
+            className="font-display text-4xl lg:text-6xl leading-none mb-6"
+          >
             {m.name}
           </h1>
+
           <p className="text-base text-[#52525B] leading-relaxed mb-10 max-w-2xl">
             {m.description || "No description provided."}
           </p>
+
           <MapPreview
             mapId={m.id}
             areaSize={m.area_size}
             certificateStatus={m.certificate_status}
-          >/
+          />
+        </div>
 
         <aside className="lg:col-span-4 space-y-4">
           <div className="card-sharp p-6">
             <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#002FA7] mb-4">
               // Metadata
             </div>
+
             <dl className="space-y-3 font-mono text-sm">
               <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Format</dt>
@@ -91,37 +117,50 @@ export default function MapDetail() {
                   {EXT_LABEL[m.ext]}
                 </dd>
               </div>
+
+              <div className="flex justify-between border-b border-black/10 pb-2">
+                <dt className="text-[#52525B]">Size</dt>
+                <dd className="text-[#0A0A0A] font-medium">
+                  {humanSize(m.size)}
+                </dd>
+              </div>
+
               <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Filename</dt>
                 <dd className="text-[#0A0A0A] font-medium truncate max-w-[180px]">
                   {m.original_filename}
                 </dd>
               </div>
+
               <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Luas Wilayah</dt>
                 <dd className="text-[#0A0A0A] font-medium">
                   {m.area_size ? `${m.area_size} m²` : "—"}
                 </dd>
               </div>
+
               <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Status Sertifikat</dt>
-                <dd className="text-[0A0A0A] font medium text-right max-w-[180px]">
+                <dd className="text-[#0A0A0A] font-medium text-right max-w-[180px]">
                   {m.certificate_status || "—"}
                 </dd>
               </div>
-            <div className="flex justify-between">
-              <dt className="text-[#52525B]">Added</dt>
-              <dd className="text-[#0A0A0A] font-medium">
-            {new Date(m.created_at).toLocaleDateString()}
-              </dd>
-            </div>
+
+              <div className="flex justify-between">
+                <dt className="text-[#52525B]">Added</dt>
+                <dd className="text-[#0A0A0A] font-medium">
+                  {new Date(m.created_at).toLocaleDateString()}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
           <a
             data-testid="download-original-btn"
             href={fileUrl(m.id, "download")}
             className="btn-primary w-full flex items-center justify-center gap-2"
           >
-
-          <download size={18} weight="bold" />
+            <Download size={18} weight="bold" />
             Download {EXT_LABEL[m.ext]}
           </a>
 
@@ -135,22 +174,24 @@ export default function MapDetail() {
           </a>
 
           <a
-            data-testid="download-gejson-btn"
+            data-testid="download-geojson-btn"
             href={fileUrl(m.id, "geojson")}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-black/15 hover:bg-black hover:text-white transtion-colors text-sm font-mono uppercase tracking-widest"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-black/15 hover:bg-black hover:text-white transition-colors text-sm font-mono uppercase tracking-widest"
           >
-            <fileArchive size={16} weight="bold" />
-            GeoJson
+            <FileArchive size={16} weight="bold" />
+            GeoJSON
           </a>
-  
+
           <div className="p-5 bg-[#0A0A0A] text-white">
             <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FF3B30] mb-2">
               // Tip
             </div>
+
             <p className="text-sm text-white/80 leading-relaxed">
               Downloaded .kml file? Double-click it and it will open directly in
               Google Earth Pro on your machine.
             </p>
+          </div>
         </aside>
       </div>
     </div>
