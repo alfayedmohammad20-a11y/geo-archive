@@ -48,7 +48,9 @@ export default function MapDetail() {
   if (notFound) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <h1 className="font-display text-4xl mb-4">Map not found</h1>
+        <h1 className="font-display text-4xl mb-4">
+          Map not found
+        </h1>
 
         <Link
           to="/"
@@ -81,6 +83,7 @@ export default function MapDetail() {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+
         <div className="lg:col-span-8">
           <div className="font-mono text-xs uppercase tracking-[0.3em] text-[#002FA7] mb-3">
             {EXT_LABEL[m.ext] || m.ext}
@@ -105,53 +108,70 @@ export default function MapDetail() {
         </div>
 
         <aside className="lg:col-span-4 space-y-4">
+
           <div className="card-sharp p-6">
             <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#002FA7] mb-4">
               // Metadata
             </div>
 
             <dl className="space-y-3 font-mono text-sm">
+
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Format</dt>
+                <dt className="text-[#52525B]">
+                  Format
+                </dt>
                 <dd className="text-[#0A0A0A] font-medium">
                   {EXT_LABEL[m.ext]}
                 </dd>
               </div>
 
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Size</dt>
+                <dt className="text-[#52525B]">
+                  Size
+                </dt>
                 <dd className="text-[#0A0A0A] font-medium">
                   {humanSize(m.size)}
                 </dd>
               </div>
 
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Filename</dt>
+                <dt className="text-[#52525B]">
+                  Filename
+                </dt>
                 <dd className="text-[#0A0A0A] font-medium truncate max-w-[180px]">
                   {m.original_filename}
                 </dd>
               </div>
 
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Luas Wilayah</dt>
+                <dt className="text-[#52525B]">
+                  Luas Wilayah
+                </dt>
                 <dd className="text-[#0A0A0A] font-medium">
-                  {m.area_size ? `${m.area_size} m²` : "—"}
+                  {m.area_size
+                    ? `${m.area_size} m²`
+                    : "—"}
                 </dd>
               </div>
 
               <div className="flex justify-between border-b border-black/10 pb-2">
-                <dt className="text-[#52525B]">Status Sertifikat</dt>
+                <dt className="text-[#52525B]">
+                  Status Sertifikat
+                </dt>
                 <dd className="text-[#0A0A0A] font-medium text-right max-w-[180px]">
                   {m.certificate_status || "—"}
                 </dd>
               </div>
 
               <div className="flex justify-between">
-                <dt className="text-[#52525B]">Added</dt>
+                <dt className="text-[#52525B]">
+                  Added
+                </dt>
                 <dd className="text-[#0A0A0A] font-medium">
                   {new Date(m.created_at).toLocaleDateString()}
                 </dd>
               </div>
+
             </dl>
           </div>
 
@@ -192,6 +212,7 @@ export default function MapDetail() {
               Google Earth Pro on your machine.
             </p>
           </div>
+
         </aside>
       </div>
     </div>
