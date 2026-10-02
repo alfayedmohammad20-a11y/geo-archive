@@ -73,8 +73,11 @@ export default function MapDetail() {
           <p className="text-base text-[#52525B] leading-relaxed mb-10 max-w-2xl">
             {m.description || "No description provided."}
           </p>
-          <MapPreview mapId={m.id} />
-        </div>
+          <MapPreview
+            mapId={m.id}
+            areaSize={m.area_size}
+            certificateStatus={m.certificate_status
+          >/
 
         <aside className="lg:col-span-4 space-y-4">
           <div className="card-sharp p-6">
