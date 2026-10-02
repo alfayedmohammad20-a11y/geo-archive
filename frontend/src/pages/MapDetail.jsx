@@ -76,7 +76,7 @@ export default function MapDetail() {
           <MapPreview
             mapId={m.id}
             areaSize={m.area_size}
-            certificateStatus={m.certificate_status
+            certificateStatus={m.certificate_status}
           >/
 
         <aside className="lg:col-span-4 space-y-4">
@@ -105,6 +105,7 @@ export default function MapDetail() {
               </div>
               <div className="flex justify-between border-b border-black/10 pb-2">
                 <dt className="text-[#52525B]">Status Sertifikat</dt>
+                <dd className="text-[0A0A0A] font medium text-right max-w-[180px]">
                   {m.certificate_status || "—"}
                 </dd>
               </div>
