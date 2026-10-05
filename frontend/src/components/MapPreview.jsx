@@ -1,29 +1,48 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  GeoJSON,
+} from "react-leaflet";
 import L from "leaflet";
 import { http } from "@/lib/api";
 
-// Fix Leaflet default icon paths (needed under bundlers)
+// Fix Leaflet default icon paths
 delete L.Icon.Default.prototype._getIconUrl;
+
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
 function computeBounds(geojson) {
   const coords = [];
+
   const walk = (c) => {
-    if (typeof c[0] === "number") coords.push(c);
-    else c.forEach(walk);
+    if (typeof c[0] === "number") {
+      coords.push(c);
+    } else {
+      c.forEach(walk);
+    }
   };
+
   (geojson.features || []).forEach((f) => {
-    if (f.geometry && f.geometry.coordinates) walk(f.geometry.coordinates);
+    if (f.geometry && f.geometry.coordinates) {
+      walk(f.geometry.coordinates);
+    }
   });
-  if (coords.length === 0) return null;
+
+  if (coords.length === 0) {
+    return null;
+  }
+
   const lats = coords.map((c) => c[1]);
   const lngs = coords.map((c) => c[0]);
+
   return [
     [Math.min(...lats), Math.min(...lngs)],
     [Math.max(...lats), Math.max(...lngs)],
@@ -34,12 +53,16 @@ function FitBounds({ bounds, map }) {
   useEffect(() => {
     if (bounds && map) {
       try {
-        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+        map.fitBounds(bounds, {
+          padding: [30, 30],
+          maxZoom: 14,
+        });
       } catch (err) {
         console.warn("fitBounds failed:", err);
       }
     }
   }, [bounds, map]);
+
   return null;
 }
 
@@ -47,28 +70,45 @@ export default function MapPreview({
   mapId,
   areaSize,
   certificateStatus,
-}){
+}) {
+  const [geojson, setGeojson] = useState(null);
+  const [error, setError] = useState(null);
+  const [map, setMap] = useState(null);
 
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       try {
-        const { data } = await http.get(`/maps/${mapId}/geojson`);
-        if (mounted) setGeojson(data);
+        const { data } = await http.get(
+          `/maps/${mapId}/geojson`
+        );
+
+        if (mounted) {
+          setGeojson(data);
+        }
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           setError(
-            e.response?.data?.detail || "Preview unavailable for this file"
+            e.response?.data?.detail ||
+              "Preview unavailable for this file"
           );
+        }
       }
     })();
+
     return () => {
       mounted = false;
     };
   }, [mapId]);
 
-  const bounds = geojson ? computeBounds(geojson) : null;
-  const hasFeatures = geojson && (geojson.features || []).length > 0;
+  const bounds = geojson
+    ? computeBounds(geojson)
+    : null;
+
+  const hasFeatures =
+    geojson &&
+    (geojson.features || []).length > 0;
 
   return (
     <div
@@ -83,16 +123,21 @@ export default function MapPreview({
           {error}
         </div>
       )}
+
       {!error && !geojson && (
         <div className="absolute inset-0 flex items-center justify-center text-xs font-mono uppercase tracking-widest text-[#52525B]">
           Loading preview…
         </div>
       )}
+
       {geojson && (
         <MapContainer
           center={[20, 0]}
           zoom={2}
-          style={{ width: "100%", height: "100%" }}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
           scrollWheelZoom
           whenCreated={setMap}
         >
@@ -100,43 +145,85 @@ export default function MapPreview({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+
           {hasFeatures && (
             <GeoJSON
               data={geojson}
-              style={{ color: "#002FA7", weight: 2, fillOpacity: 0.15 }}
-              pointToLayer={(f, latlng) => L.marker(latlng)}
+              style={{
+                color: "#002FA7",
+                weight: 2,
+                fillOpacity: 0.15,
+              }}
+              pointToLayer={(f, latlng) =>
+                L.marker(latlng)
+              }
               onEachFeature={(f, layer) => {
                 const p = f.properties || {};
-                const name = p.name || p.NAME || "Feature";
+
+                const name =
+                  p.name ||
+                  p.NAME ||
+                  "Feature";
+
                 const rows = Object.entries(p)
                   .slice(0, 8)
                   .map(
                     ([k, v]) =>
-                      `<div><b>${k}</b>: ${String(v).slice(0, 80)}</div>`
+                      `<div><b>${k}</b>: ${String(v).slice(
+                        0,
+                        80
+                      )}</div>`
                   )
                   .join("");
-                layer.bindPopup(`<div style="font-family:'IBM Plex Sans'"><b>${name}</b>${rows ? "<hr/>" + rows : ""}</div>`);
+
+                layer.bindPopup(
+                  `<div style="font-family:'IBM Plex Sans'"><b>${name}</b>${
+                    rows
+                      ? "<hr/>" + rows
+                      : ""
+                  }</div>`
+                );
               }}
             />
           )}
-          <FitBounds bounds={bounds} map={map} />
-        </MapContainer>
-      {(areaSize || certificateStatus) && (
-      <div className="absolute top-4 left-4 z-[1000] bg-white/95 border border-black/10 p-4 shadow-sm">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-[002FA7] mb-2
-        //PROPERTY INFO
-      </div>
 
-      <div className="text-sm">
-        <div>
-          <span className="text-[52525B]">Luas:</span>{""}
-          <strong>{areaSize ? '${areaSize m² :"—"}</strong>
+          <FitBounds
+            bounds={bounds}
+            map={map}
+          />
+        </MapContainer>
+      )}
+
+      {(areaSize || certificateStatus) && (
+        <div className="absolute top-4 left-4 z-[1000] bg-white/95 border border-black/10 p-4 shadow-sm">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-[#002FA7] mb-2">
+            // PROPERTY INFO
+          </div>
+
+          <div className="text-sm">
+            <div>
+              <span className="text-[#52525B]">
+                Luas:
+              </span>{" "}
+              <strong>
+                {areaSize
+                  ? `${areaSize} m²`
+                  : "—"}
+              </strong>
             </div>
 
-        <div className="mt-1">
-            <span className="text-[52525B]">Status:</span>{""}
-            <strong>{certuficateStatus || "—"}</strong>
+            <div className="mt-1">
+              <span className="text-[#52525B]">
+                Status:
+              </span>{" "}
+              <strong>
+                {certificateStatus ||
+                  "—"}
+              </strong>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
+    </div>
+  );
+}
