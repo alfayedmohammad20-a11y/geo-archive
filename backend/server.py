@@ -212,7 +212,6 @@ async def list_tags():
 
 
 @api.get("/maps/{map_id}")
-@api.get("/api/maps/{map_id}")
 async def get_map(map_id: str):
     doc = await db.maps.find_one({"id": map_id, "is_deleted": {"$ne": True}})
     if not doc:
@@ -221,7 +220,6 @@ async def get_map(map_id: str):
 
 
 @api.post("/maps")
-@api.post("/api/maps")
 async def create_map(
     name: str = Form(...),
     description: str = Form(""),
